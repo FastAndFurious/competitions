@@ -1,0 +1,26 @@
+{
+    "competitionApp": {
+        "competition" : {
+            "home": {
+                "title": "Competitions",
+                "createLabel": "Create a new Competition",
+                "createOrEditLabel": "Create or edit a Competition"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Competition {{ id }}?"
+            },
+            "detail": {
+                "title": "Competition"
+            },
+            "name": "Name",
+            "trackId": "TrackId",
+            "startDate": "StartDate",
+            "bestSequence": "BestSequence",
+            "bestSet": "BestSet",
+            "firstPriority": "FirstPriority",
+            "secondPriority": "SecondPriority",
+            "runDuration": "RunDuration",
+            "numberOfSessions": "NumberOfSessions"
+        }
+    }
+}

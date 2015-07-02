@@ -1,0 +1,23 @@
+{
+    "competitionApp": {
+        "racingSession" : {
+            "home": {
+                "title": "RacingSessions",
+                "createLabel": "Créer un nouveau RacingSession",
+                "createOrEditLabel": "Créer ou éditer un RacingSession"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le RacingSession {{ id }} ?"
+            },
+            "detail": {
+                "title": "RacingSession"
+            },
+            "competition": "Competition",
+            "type": "Type",
+            "seqNo": "SeqNo",
+            "plannedStartTime": "PlannedStartTime",
+            "trackLayout": "TrackLayout"
+        }
+    }
+}
+

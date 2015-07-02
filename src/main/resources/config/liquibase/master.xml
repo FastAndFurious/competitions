@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="classpath:config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20150520181703_added_entity_Competition.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20150526192200_added_entity_RoundTime.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20150608162651_added_entity_RacingSession.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20150612175712_added_entity_TeamRegistration.xml" relativeToChangelogFile="false"/>
+    <!-- JHipster will add liquibase changelogs here -->
+</databaseChangeLog>

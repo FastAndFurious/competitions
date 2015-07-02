@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span translate="competitionApp.teamRegistration.detail.title">TeamRegistration</span> {{teamRegistration.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th translate="entity.detail.field">Field</th>
+                    <th translate="entity.detail.value">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span translate="competitionApp.teamRegistration.competition">Competition</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{teamRegistration.competition}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="competitionApp.teamRegistration.team">Team</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{teamRegistration.team}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="competitionApp.teamRegistration.registrationTime">RegistrationTime</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{teamRegistration.registrationTime}}" readonly>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="teamRegistration"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

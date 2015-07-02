@@ -1,2 +1,2 @@
-# competitions
-Service component to define and manage competitions
+README for competition
+==========================

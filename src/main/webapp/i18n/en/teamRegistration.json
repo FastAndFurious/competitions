@@ -1,0 +1,20 @@
+{
+    "competitionApp": {
+        "teamRegistration" : {
+            "home": {
+                "title": "TeamRegistrations",
+                "createLabel": "Create a new TeamRegistration",
+                "createOrEditLabel": "Create or edit a TeamRegistration"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete TeamRegistration {{ id }}?"
+            },
+            "detail": {
+                "title": "TeamRegistration"
+            },
+            "competition": "Competition",
+            "team": "Team",
+            "registrationTime": "RegistrationTime"
+        }
+    }
+}
