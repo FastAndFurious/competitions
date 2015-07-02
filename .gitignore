@@ -16,3 +16,6 @@ hs_err_pid*
 
 
 .idea/
+bower_components/
+node_modules/
+target/
