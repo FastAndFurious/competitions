@@ -19,3 +19,6 @@ hs_err_pid*
 bower_components/
 node_modules/
 target/
+.sass-cache/
+.tmp/
+dist/
