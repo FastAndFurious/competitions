@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('competitionApp')
-    .factory('AuthServerProvider', function loginService($http, localStorageService, $window, Tracker) {
+    .factory('AuthServerProvider', function loginService($http, localStorageService, $window) {
         return {
             login: function(credentials) {
                 var data = 'j_username=' + encodeURIComponent(credentials.username) +
@@ -16,7 +16,6 @@ angular.module('competitionApp')
                 });
             },
             logout: function() {
-                Tracker.disconnect();
                 // logout from the server
                 $http.post('api/logout').success(function (response) {
                     localStorageService.clearAll();

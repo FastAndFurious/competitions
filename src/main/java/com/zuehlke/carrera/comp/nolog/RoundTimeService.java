@@ -1,4 +1,4 @@
-package com.zuehlke.carrera.comp.service;
+package com.zuehlke.carrera.comp.nolog;
 
 import com.zuehlke.carrera.comp.domain.CompetitionState;
 import com.zuehlke.carrera.comp.domain.RoundTime;

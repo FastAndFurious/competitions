@@ -2,7 +2,7 @@ package com.zuehlke.carrera.comp.domain.util;
 
 import java.io.IOException;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,18 +13,18 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 /**
  * Custom Jackson deserializer for displaying Joda DateTime objects.
  */
-public class CustomDateTimeDeserializer extends JsonDeserializer<DateTime> {
+public class CustomDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
 
     @Override
-    public DateTime deserialize(JsonParser jp, DeserializationContext ctxt)
+    public LocalDateTime deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_STRING) {
             String str = jp.getText().trim();
-            return ISODateTimeFormat.dateTimeParser().parseDateTime(str);
+            return ISODateTimeFormat.dateTimeParser().parseLocalDateTime(str);
         }
         if (t == JsonToken.VALUE_NUMBER_INT) {
-            return new DateTime(jp.getLongValue());
+            return new LocalDateTime(jp.getLongValue());
         }
         throw ctxt.mappingException(handledType());
     }

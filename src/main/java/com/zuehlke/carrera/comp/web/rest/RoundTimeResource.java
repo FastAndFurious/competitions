@@ -1,10 +1,8 @@
 package com.zuehlke.carrera.comp.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.zuehlke.carrera.comp.domain.Competition;
 import com.zuehlke.carrera.comp.domain.RoundTime;
-import com.zuehlke.carrera.comp.repository.CompetitionRepository;
-import com.zuehlke.carrera.comp.service.RoundTimeService;
+import com.zuehlke.carrera.comp.nolog.RoundTimeService;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -65,7 +65,7 @@ public class CompetitionManagerApp {
      */
     public static void main(String[] args) throws UnknownHostException {
         SpringApplication app = new SpringApplication(CompetitionManagerApp.class);
-        app.setShowBanner(false);
+        app.setShowBanner(true);
         SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
         addDefaultProfile(app, source);
         addLiquibaseScanPackages();

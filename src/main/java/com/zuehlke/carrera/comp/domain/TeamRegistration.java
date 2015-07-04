@@ -7,7 +7,7 @@ import com.zuehlke.carrera.comp.domain.util.CustomDateTimeSerializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -34,11 +34,20 @@ public class TeamRegistration implements Serializable {
     @Column(name = "team", nullable = false)
     private String team;
 
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
     @Column(name = "registration_time", nullable = false)
-    private DateTime registrationTime;
+    private LocalDateTime registrationTime;
+
+    public TeamRegistration(){} // for JPA
+
+    public TeamRegistration(Long id, String competition, String team, LocalDateTime registrationTime) {
+        this.id = id;
+        this.competition = competition;
+        this.team = team;
+        this.registrationTime = registrationTime;
+    }
 
     public Long getId() {
         return id;
@@ -64,11 +73,11 @@ public class TeamRegistration implements Serializable {
         this.team = team;
     }
 
-    public DateTime getRegistrationTime() {
+    public LocalDateTime getRegistrationTime() {
         return registrationTime;
     }
 
-    public void setRegistrationTime(DateTime registrationTime) {
+    public void setRegistrationTime(LocalDateTime registrationTime) {
         this.registrationTime = registrationTime;
     }
 

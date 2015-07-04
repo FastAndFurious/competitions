@@ -4,6 +4,7 @@ import com.zuehlke.carrera.comp.CompetitionManagerApp;
 import com.zuehlke.carrera.comp.domain.RacingSession;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,14 +47,15 @@ public class RacingSessionResourceTest {
 
     private static final String DEFAULT_COMPETITION = "SAMPLE_TEXT";
     private static final String UPDATED_COMPETITION = "UPDATED_TEXT";
-    private static final String DEFAULT_TYPE = "SAMPLE_TEXT";
-    private static final String UPDATED_TYPE = "UPDATED_TEXT";
+    private static final RacingSession.SessionType DEFAULT_TYPE = RacingSession.SessionType.Training;
+    private static final RacingSession.SessionType UPDATED_TYPE = RacingSession.SessionType.Competition;
 
     private static final Integer DEFAULT_SEQ_NO = 0;
     private static final Integer UPDATED_SEQ_NO = 1;
 
-    private static final DateTime DEFAULT_PLANNED_START_TIME = new DateTime(0L, DateTimeZone.UTC);
-    private static final DateTime UPDATED_PLANNED_START_TIME = new DateTime(DateTimeZone.UTC).withMillisOfSecond(0);
+    private static final LocalDateTime DEFAULT_PLANNED_START_TIME = new LocalDateTime(0L);
+    private static final LocalDateTime UPDATED_PLANNED_START_TIME = new LocalDateTime()
+            .withSecondOfMinute(0).withMillisOfSecond(0);
     private static final String DEFAULT_PLANNED_START_TIME_STR = dateTimeFormatter.print(DEFAULT_PLANNED_START_TIME);
     private static final String DEFAULT_TRACK_LAYOUT = "SAMPLE_TEXT";
     private static final String UPDATED_TRACK_LAYOUT = "UPDATED_TEXT";
@@ -88,6 +90,8 @@ public class RacingSessionResourceTest {
     public void createRacingSession() throws Exception {
         int databaseSizeBeforeCreate = racingSessionRepository.findAll().size();
 
+        String json = new String(TestUtil.convertObjectToJsonBytes(racingSession));
+
         // Create the RacingSession
         restRacingSessionMockMvc.perform(post("/api/racingSessions")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -101,7 +105,7 @@ public class RacingSessionResourceTest {
         assertThat(testRacingSession.getCompetition()).isEqualTo(DEFAULT_COMPETITION);
         assertThat(testRacingSession.getType()).isEqualTo(DEFAULT_TYPE);
         assertThat(testRacingSession.getSeqNo()).isEqualTo(DEFAULT_SEQ_NO);
-        assertThat(testRacingSession.getPlannedStartTime().toDateTime(DateTimeZone.UTC)).isEqualTo(DEFAULT_PLANNED_START_TIME);
+        assertThat(testRacingSession.getPlannedStartTime()).isEqualTo(DEFAULT_PLANNED_START_TIME);
         assertThat(testRacingSession.getTrackLayout()).isEqualTo(DEFAULT_TRACK_LAYOUT);
     }
 
@@ -195,6 +199,8 @@ public class RacingSessionResourceTest {
 
 		int databaseSizeBeforeUpdate = racingSessionRepository.findAll().size();
 
+        String json = new String (TestUtil.convertObjectToJsonBytes(racingSession));
+
         // Update the racingSession
         racingSession.setCompetition(UPDATED_COMPETITION);
         racingSession.setType(UPDATED_TYPE);
@@ -213,7 +219,7 @@ public class RacingSessionResourceTest {
         assertThat(testRacingSession.getCompetition()).isEqualTo(UPDATED_COMPETITION);
         assertThat(testRacingSession.getType()).isEqualTo(UPDATED_TYPE);
         assertThat(testRacingSession.getSeqNo()).isEqualTo(UPDATED_SEQ_NO);
-        assertThat(testRacingSession.getPlannedStartTime().toDateTime(DateTimeZone.UTC)).isEqualTo(UPDATED_PLANNED_START_TIME);
+        assertThat(testRacingSession.getPlannedStartTime()).isEqualTo(UPDATED_PLANNED_START_TIME);
         assertThat(testRacingSession.getTrackLayout()).isEqualTo(UPDATED_TRACK_LAYOUT);
     }
 

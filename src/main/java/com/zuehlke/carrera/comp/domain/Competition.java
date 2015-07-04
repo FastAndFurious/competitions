@@ -52,6 +52,15 @@ public class Competition implements Serializable {
     @Column(name = "second_priority")
     private String secondPriority;
 
+    public Competition() {} // for JPA
+
+    public Competition(Long id, String name, String trackId, LocalDate startDate) {
+        this.id = id;
+        this.name = name;
+        this.trackId = trackId;
+        this.startDate = startDate;
+    }
+
     public Long getId() {
         return id;
     }

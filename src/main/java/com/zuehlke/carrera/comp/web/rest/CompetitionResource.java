@@ -76,17 +76,29 @@ public class CompetitionResource {
     /**
      * GET  /competitions/:id -> get the "id" competition.
      */
-    @RequestMapping(value = "/competitions/{id}",
+    @RequestMapping(value = "/competitions/{nameOrId}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Competition> get(@PathVariable Long id) {
-        log.debug("REST request to get Competition : {}", id);
-        return Optional.ofNullable(competitionRepository.findOne(id))
-            .map(competition -> new ResponseEntity<>(
-                competition,
-                HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Competition> get(@PathVariable String nameOrId) {
+        log.debug("REST request to get Competition : {}", nameOrId);
+
+        Long id;
+        try {
+            id = Long.parseLong(nameOrId);
+            return Optional.ofNullable(competitionRepository.findOne(id))
+                    .map(competition -> new ResponseEntity<>(
+                            competition,
+                            HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch ( NumberFormatException nfe ) {
+            return Optional.ofNullable(competitionRepository.findByName(nameOrId))
+                    .map(competition -> new ResponseEntity<>(
+                            competition,
+                            HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+
     }
 
     /**

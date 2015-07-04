@@ -7,7 +7,7 @@ import com.zuehlke.carrera.comp.domain.util.CustomDateTimeSerializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -30,21 +30,32 @@ public class RacingSession implements Serializable {
     @Column(name = "competition", nullable = false)
     private String competition;
 
-    @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private SessionType type;
 
     @Column(name = "seq_no")
     private Integer seqNo;
 
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
     @Column(name = "planned_start_time", nullable = false)
-    private DateTime plannedStartTime;
+    private LocalDateTime plannedStartTime;
 
     @NotNull
     @Column(name = "track_layout", nullable = false)
     private String trackLayout;
+
+    public RacingSession(){} // for JPA
+
+    public RacingSession(Long id, String competition, SessionType type, Integer seqNo, LocalDateTime plannedStartTime, String trackLayout) {
+        this.id = id;
+        this.competition = competition;
+        this.type = type;
+        this.seqNo = seqNo;
+        this.plannedStartTime = plannedStartTime;
+        this.trackLayout = trackLayout;
+    }
 
     public Long getId() {
         return id;
@@ -62,11 +73,11 @@ public class RacingSession implements Serializable {
         this.competition = competition;
     }
 
-    public String getType() {
+    public SessionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(SessionType type) {
         this.type = type;
     }
 
@@ -78,11 +89,11 @@ public class RacingSession implements Serializable {
         this.seqNo = seqNo;
     }
 
-    public DateTime getPlannedStartTime() {
+    public LocalDateTime getPlannedStartTime() {
         return plannedStartTime;
     }
 
-    public void setPlannedStartTime(DateTime plannedStartTime) {
+    public void setPlannedStartTime(LocalDateTime plannedStartTime) {
         this.plannedStartTime = plannedStartTime;
     }
 
@@ -105,9 +116,8 @@ public class RacingSession implements Serializable {
 
         RacingSession racingSession = (RacingSession) o;
 
-        if ( ! Objects.equals(id, racingSession.id)) return false;
+        return Objects.equals(id, racingSession.id);
 
-        return true;
     }
 
     @Override
@@ -125,5 +135,11 @@ public class RacingSession implements Serializable {
                 ", plannedStartTime='" + plannedStartTime + "'" +
                 ", trackLayout='" + trackLayout + "'" +
                 '}';
+    }
+
+    public enum SessionType {
+        Training,
+        Qualifying,
+        Competition
     }
 }

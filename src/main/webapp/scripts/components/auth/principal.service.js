@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('competitionApp')
-    .factory('Principal', function Principal($q, Account, Tracker) {
+    .factory('Principal', function Principal($q, Account) {
         var _identity,
             _authenticated = false;
 
@@ -57,7 +57,6 @@ angular.module('competitionApp')
                         _identity = account.data;
                         _authenticated = true;
                         deferred.resolve(_identity);
-                        Tracker.connect();
                     })
                     .catch(function() {
                         _identity = null;

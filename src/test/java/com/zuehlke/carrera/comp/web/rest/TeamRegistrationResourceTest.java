@@ -4,6 +4,8 @@ import com.zuehlke.carrera.comp.CompetitionManagerApp;
 import com.zuehlke.carrera.comp.domain.TeamRegistration;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
 
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -42,15 +41,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class TeamRegistrationResourceTest {
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final DateTimeFormatter dateTimeFormatter =
+            DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     private static final String DEFAULT_COMPETITION = "SAMPLE_TEXT";
     private static final String UPDATED_COMPETITION = "UPDATED_TEXT";
     private static final String DEFAULT_TEAM = "SAMPLE_TEXT";
     private static final String UPDATED_TEAM = "UPDATED_TEXT";
 
-    private static final DateTime DEFAULT_REGISTRATION_TIME = new DateTime(0L, DateTimeZone.UTC);
-    private static final DateTime UPDATED_REGISTRATION_TIME = new DateTime(DateTimeZone.UTC).withMillisOfSecond(0);
+    private static final LocalDateTime DEFAULT_REGISTRATION_TIME = new LocalDateTime(0L);
+    private static final LocalDateTime UPDATED_REGISTRATION_TIME = new LocalDateTime()
+            .withSecondOfMinute(0).withMillisOfSecond(0);
     private static final String DEFAULT_REGISTRATION_TIME_STR = dateTimeFormatter.print(DEFAULT_REGISTRATION_TIME);
 
     @Inject
@@ -93,7 +94,7 @@ public class TeamRegistrationResourceTest {
         TeamRegistration testTeamRegistration = teamRegistrations.get(teamRegistrations.size() - 1);
         assertThat(testTeamRegistration.getCompetition()).isEqualTo(DEFAULT_COMPETITION);
         assertThat(testTeamRegistration.getTeam()).isEqualTo(DEFAULT_TEAM);
-        assertThat(testTeamRegistration.getRegistrationTime().toDateTime(DateTimeZone.UTC)).isEqualTo(DEFAULT_REGISTRATION_TIME);
+        assertThat(testTeamRegistration.getRegistrationTime()).isEqualTo(DEFAULT_REGISTRATION_TIME);
     }
 
     @Test
@@ -197,7 +198,7 @@ public class TeamRegistrationResourceTest {
         TeamRegistration testTeamRegistration = teamRegistrations.get(teamRegistrations.size() - 1);
         assertThat(testTeamRegistration.getCompetition()).isEqualTo(UPDATED_COMPETITION);
         assertThat(testTeamRegistration.getTeam()).isEqualTo(UPDATED_TEAM);
-        assertThat(testTeamRegistration.getRegistrationTime().toDateTime(DateTimeZone.UTC)).isEqualTo(UPDATED_REGISTRATION_TIME);
+        assertThat(testTeamRegistration.getRegistrationTime()).isEqualTo(UPDATED_REGISTRATION_TIME);
     }
 
     @Test
