@@ -1,8 +1,11 @@
 package com.zuehlke.carrera.comp.nolog;
 
 import com.zuehlke.carrera.comp.domain.CompetitionState;
+import com.zuehlke.carrera.comp.domain.FuriousRun;
 import com.zuehlke.carrera.comp.domain.RoundTime;
+import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RoundTimeRepository;
+import com.zuehlke.carrera.comp.repository.SpecialRepo;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +23,10 @@ public class RoundTimeService {
     private SimpMessageSendingOperations messagingTemplate;
 
     @Inject
-    private RoundTimeRepository repository;
+    private RoundTimeRepository roundRepository;
+
+    @Inject
+    private SpecialRepo specialRepo;
 
     public Long register(RoundTimeMessage message) {
 
@@ -30,11 +36,20 @@ public class RoundTimeService {
             message.getTeam(),
             message.getTrack());
 
-        repository.save(roundTime);
+        FuriousRun run = findOngoingRunOnTrack ( message.getTrack());
+
+        roundTime.setRunId( run.getId());
+
+        roundRepository.save(roundTime);
 
         messagingTemplate.convertAndSend("/topic/rounds", roundTime);
 
         return roundTime.getId();
+    }
+
+    private FuriousRun findOngoingRunOnTrack(String track) {
+
+        return specialRepo.findOngoingRunOnTrack(track);
     }
 
     public CompetitionState assembleState () {
@@ -47,14 +62,14 @@ public class RoundTimeService {
     }
 
     public List<RoundTime> findAll() {
-        return repository.findAll();
+        return roundRepository.findAll();
     }
 
     public RoundTime findOne(Long id) {
-        return repository.findOne(id);
+        return roundRepository.findOne(id);
     }
 
     public void delete(Long id) {
-        repository.delete(id);
+        roundRepository.delete(id);
     }
 }

@@ -42,6 +42,9 @@ public class RoundTime implements Serializable {
     @Column(name = "track", nullable = false)
     private String track;
 
+    @Column(name = "run_id")
+    private Long runId;
+
     public RoundTime(long timestamp, long duration, String team, String track) {
         this.timestamp = timestamp;
         this.duration = duration;
@@ -90,5 +93,13 @@ public class RoundTime implements Serializable {
 
     public void setTrack(String track) {
         this.track = track;
+    }
+
+    public Long getRunId() {
+        return runId;
+    }
+
+    public void setRunId(Long runId) {
+        this.runId = runId;
     }
 }
