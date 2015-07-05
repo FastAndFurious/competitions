@@ -8,6 +8,7 @@ import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.web.rest.RunRequest;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -15,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
@@ -51,11 +53,16 @@ public class ScheduleServiceTest {
     @Before
     public void setup () {
 
+        runRepo.deleteAll();
+        teamRepo.deleteAll();
+        sessionRepo.deleteAll();
+        compRepo.deleteAll();
+
         Competition comp = new Competition(1L, "HSR2015", "Ninco1", new LocalDate());
         compRepo.save(comp);
 
         RacingSession session = new RacingSession(1L, "HSR2015", RacingSession.SessionType.Training,
-                1, new LocalDateTime(), "Hollywood");
+                1, new LocalDateTime(), "sim02", "Hollywood");
         sessionRepo.save(session);
 
         LocalDateTime first = new LocalDateTime(2015,9,1,15,0,0,0);
@@ -63,13 +70,13 @@ public class ScheduleServiceTest {
         LocalDateTime third = second.plusMinutes(10);
         LocalDateTime fourth = third.plusMinutes(10);
 
-        TeamRegistration wolfies  = new TeamRegistration(1L, "HSR2015", "wolfies", first);
+        TeamRegistration wolfies  = new TeamRegistration(1L, "HSR2015", "wolfies", "access", first);
         teamRepo.save(wolfies);
-        TeamRegistration harries  = new TeamRegistration(2L, "HSR2015", "harries", second);
+        TeamRegistration harries  = new TeamRegistration(2L, "HSR2015", "harries", "access", second);
         teamRepo.save(harries);
-        TeamRegistration steffies  = new TeamRegistration(3L, "HSR2015", "steffies", third);
+        TeamRegistration steffies  = new TeamRegistration(3L, "HSR2015", "steffies", "access", third);
         teamRepo.save(steffies);
-        TeamRegistration bernies  = new TeamRegistration(4L, "HSR2015", "bernies", fourth);
+        TeamRegistration bernies  = new TeamRegistration(4L, "HSR2015", "bernies", "access", fourth);
         teamRepo.save(bernies);
     }
 
@@ -80,6 +87,17 @@ public class ScheduleServiceTest {
 
         Assert.assertEquals(4, schedule.size());
     }
+
+    @Test
+    public void testStartRun () {
+        List<FuriousRun> schedule = service.findOrCreateForSession(1L);
+
+        service.startRun(schedule.get(0).getId());
+
+        Assert.assertNotNull(results.get("request"));
+    }
+
+    public static Map<String, Object> results = new HashMap<>();
 
     public static class ScheduleServiceTestContext {
 
@@ -93,6 +111,21 @@ public class ScheduleServiceTest {
             return new ScheduleService();
         }
 
+        @Bean RelayApi relayApi() {
+            return new RelayApi() {
+                @Override
+                public boolean startRun(RunRequest request, Logger logger) {
+                    results.put("request", request);
+                    return true;
+                }
+
+                @Override
+                public boolean stopRun ( RunRequest request, Logger logger ) {
+                    return true;
+                }
+            };
+        }
+
         @Bean
         TeamRegistrationRepository teamRepo () {
             return new TeamRegistrationRepository() {
@@ -100,6 +133,16 @@ public class ScheduleServiceTest {
                 public List<TeamRegistration> findByCompetition(String comp) {
                     return team_db.stream().filter(x -> x.getCompetition().equals(comp))
                             .collect(Collectors.toCollection(ArrayList::new));
+                }
+
+                @Override
+                public TeamRegistration findByTeam(String team) {
+                    for ( TeamRegistration registration : team_db ) {
+                        if ( registration.getTeam().equals(team)) {
+                            return registration;
+                        }
+                    }
+                    return null;
                 }
 
                 @Override
@@ -202,7 +245,7 @@ public class ScheduleServiceTest {
 
                 @Override
                 public void deleteAll() {
-
+                    team_db.clear();
                 }
             };
         }
@@ -269,6 +312,9 @@ public class ScheduleServiceTest {
 
                 @Override
                 public <S extends FuriousRun> S save(S entity) {
+                    if ( entity.getId() == null ) {
+                        entity.setId(((long) (run_db.size() + 1)));
+                    }
                     if (! exists ( entity.getId())) {
                         run_db.add(entity);
                     }

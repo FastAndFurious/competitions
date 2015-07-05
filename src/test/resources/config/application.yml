@@ -55,3 +55,6 @@ swagger:
     contact:
     license: Apache 2.0
     licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
+
+competitions:
+    relayUrl: http://localhost:8085/ws/rest/raceTracks/start

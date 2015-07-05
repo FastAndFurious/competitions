@@ -1,6 +1,6 @@
 <div>
 
-    <h2 translate="competitionApp.racingSession.home.title">RacingSession</h2>
+    <h2>Sessions for {{competition.name}}</h2>
 
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveRacingSessionModal" ng-click="clear()">
         <span class="glyphicon glyphicon-flash"></span> <span translate="competitionApp.racingSession.home.createLabel">Create a new RacingSession</span>
@@ -60,6 +60,18 @@
                                 </p>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label>Track Name</label>
+                            <input type="text" class="form-control" name="trackId"
+                                   ng-model="racingSession.trackId" required>
+
+                            <div ng-show="editForm.trackId.$invalid">
+                                <p class="help-block"
+                                   ng-show="editForm.trackId.$error.required" translate="entity.validation.required">
+                                    This field is required.
+                                </p>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -104,22 +116,20 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th translate="competitionApp.racingSession.competition">Competition</th>
-                    <th translate="competitionApp.racingSession.type">Type</th>
-                    <th translate="competitionApp.racingSession.seqNo">SeqNo</th>
-                    <th translate="competitionApp.racingSession.plannedStartTime">PlannedStartTime</th>
-                    <th translate="competitionApp.racingSession.trackLayout">TrackLayout</th>
+                    <th>Type</th>
+                    <th>Sequence Number</th>
+                    <th>PlannedStartTime</th>
+                    <th>Track Name</th>
+                    <th>Track Layout</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="racingSession in racingSessions">
-                    <td><a ui-sref="racingSessionDetail({id:racingSession.id})">{{racingSession.id}}</a></td>
-                    <td>{{racingSession.competition}}</td>
                     <td>{{racingSession.type}}</td>
                     <td>{{racingSession.seqNo}}</td>
                     <td>{{racingSession.plannedStartTime}}</td>
+                    <td>{{racingSession.trackId}}</td>
                     <td>{{racingSession.trackLayout}}</td>
                     <td>
                         <button type="submit"

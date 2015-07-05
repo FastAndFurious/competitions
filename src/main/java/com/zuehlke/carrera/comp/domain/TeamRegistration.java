@@ -34,6 +34,10 @@ public class TeamRegistration implements Serializable {
     @Column(name = "team", nullable = false)
     private String team;
 
+    @NotNull
+    @Column(name = "access_code", nullable = false)
+    private String accessCode;
+
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
@@ -42,10 +46,11 @@ public class TeamRegistration implements Serializable {
 
     public TeamRegistration(){} // for JPA
 
-    public TeamRegistration(Long id, String competition, String team, LocalDateTime registrationTime) {
+    public TeamRegistration(Long id, String competition, String team, String accessCode, LocalDateTime registrationTime) {
         this.id = id;
         this.competition = competition;
         this.team = team;
+        this.accessCode = accessCode;
         this.registrationTime = registrationTime;
     }
 
@@ -71,6 +76,14 @@ public class TeamRegistration implements Serializable {
 
     public void setTeam(String team) {
         this.team = team;
+    }
+
+    public String getAccessCode() {
+        return accessCode;
+    }
+
+    public void setAccessCode(String accessCode) {
+        this.accessCode = accessCode;
     }
 
     public LocalDateTime getRegistrationTime() {

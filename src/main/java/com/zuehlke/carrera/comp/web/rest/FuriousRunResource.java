@@ -46,7 +46,7 @@ public class FuriousRunResource {
             return ResponseEntity.badRequest().header("Failure", "A new run cannot already have an ID").build();
         }
         repository.save(furiousRun);
-        return ResponseEntity.created(new URI("/api/furiousRun/" + furiousRun.getId())).build();
+        return ResponseEntity.created(new URI("/api/furiousruns/" + furiousRun.getId())).build();
     }
 
     /**
@@ -88,6 +88,32 @@ public class FuriousRunResource {
     public List<FuriousRun> getSchedule( @PathVariable Long sessionId) {
         log.debug("REST request to get all Runs for session ");
         return scheduleService.findOrCreateForSession(sessionId);
+    }
+
+    /**
+     * PUT /furiousRuns/start/:id -> start the race with id :id
+     */
+    @RequestMapping(value = "/furiousruns/start/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> startRun( @PathVariable Long id) {
+        log.debug("REST request to start run {}", id);
+        scheduleService.startRun(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * PUT /furiousRuns/start/:id -> start the race with id :id
+     */
+    @RequestMapping(value = "/furiousruns/stop/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> stopRun( @PathVariable Long id) {
+        log.debug("REST request to stop run {}", id);
+        scheduleService.stopRun(id);
+        return ResponseEntity.ok().build();
     }
 
     /**

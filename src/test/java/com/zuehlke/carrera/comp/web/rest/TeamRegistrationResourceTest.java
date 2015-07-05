@@ -75,6 +75,7 @@ public class TeamRegistrationResourceTest {
         teamRegistration.setCompetition(DEFAULT_COMPETITION);
         teamRegistration.setTeam(DEFAULT_TEAM);
         teamRegistration.setRegistrationTime(DEFAULT_REGISTRATION_TIME);
+        teamRegistration.setAccessCode("SAMPLE_TEXT");
     }
 
     @Test

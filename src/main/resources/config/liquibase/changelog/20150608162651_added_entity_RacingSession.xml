@@ -22,11 +22,14 @@
             <column name="seq_no" type="integer"/>
             <column name="planned_start_time" type="timestamp"/>
             <column name="track_layout" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="track_id" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
         </createTable>
         <dropDefaultValue tableName="T_RACINGSESSION" columnName="planned_start_time" columnDataType="datetime"/>
 
-        
+
     </changeSet>
 </databaseChangeLog>

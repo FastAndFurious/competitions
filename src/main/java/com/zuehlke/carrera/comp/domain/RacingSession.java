@@ -46,14 +46,20 @@ public class RacingSession implements Serializable {
     @Column(name = "track_layout", nullable = false)
     private String trackLayout;
 
+    @NotNull
+    @Column(name = "track_id", nullable = false)
+    private String trackId;
+
     public RacingSession(){} // for JPA
 
-    public RacingSession(Long id, String competition, SessionType type, Integer seqNo, LocalDateTime plannedStartTime, String trackLayout) {
+    public RacingSession(Long id, String competition, SessionType type, Integer seqNo, LocalDateTime plannedStartTime,
+                         String trackId, String trackLayout) {
         this.id = id;
         this.competition = competition;
         this.type = type;
         this.seqNo = seqNo;
         this.plannedStartTime = plannedStartTime;
+        this.trackId = trackId;
         this.trackLayout = trackLayout;
     }
 
@@ -103,6 +109,14 @@ public class RacingSession implements Serializable {
 
     public void setTrackLayout(String trackLayout) {
         this.trackLayout = trackLayout;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
     }
 
     @Override

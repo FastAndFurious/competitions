@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.zuehlke.carrera</groupId>
             <artifactId>carrera.clientapi</artifactId>
-            <version>1.1.4</version>
+            <version>1.1.6</version>
         </dependency>
         <!-- The HikariCP Java Agent is disabled by default, as it is experimental
         <dependency>

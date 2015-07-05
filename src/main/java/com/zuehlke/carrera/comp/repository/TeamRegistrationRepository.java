@@ -12,4 +12,6 @@ import java.util.List;
 public interface TeamRegistrationRepository extends JpaRepository<TeamRegistration,Long> {
 
     List<TeamRegistration> findByCompetition(String compName);
+
+    TeamRegistration findByTeam(String team);
 }

@@ -10,9 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -69,6 +72,7 @@ public class RacingSessionResourceTest {
 
     @PostConstruct
     public void setup() {
+
         MockitoAnnotations.initMocks(this);
         RacingSessionResource racingSessionResource = new RacingSessionResource();
         ReflectionTestUtils.setField(racingSessionResource, "racingSessionRepository", racingSessionRepository);
@@ -83,6 +87,7 @@ public class RacingSessionResourceTest {
         racingSession.setSeqNo(DEFAULT_SEQ_NO);
         racingSession.setPlannedStartTime(DEFAULT_PLANNED_START_TIME);
         racingSession.setTrackLayout(DEFAULT_TRACK_LAYOUT);
+        racingSession.setTrackId("SAMPLE_TEXT");
     }
 
     @Test
@@ -113,9 +118,12 @@ public class RacingSessionResourceTest {
     @Transactional
     public void checkCompetitionIsRequired() throws Exception {
         // Validate the database is empty
+        String json = new String (TestUtil.convertObjectToJsonBytes(racingSession));
+
         assertThat(racingSessionRepository.findAll()).hasSize(0);
         // set the field null
         racingSession.setCompetition(null);
+
 
         // Create the RacingSession, which fails.
         restRacingSessionMockMvc.perform(post("/api/racingSessions")

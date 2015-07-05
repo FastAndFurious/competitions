@@ -20,10 +20,15 @@
                     <td>{{run.startDate}}</td>
                     <td>{{run.status}}</td>
                     <td>
-                        <button type="submit"
-                                ui-sref="compSessions({competitionId:competition.id})"
+                        <button type="submit" ng-click="startRun(run)"
+                                ng-hide="run.status==='ONGOING'"
                                 class="btn btn-info btn-sm">
                             <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>Start</span>
+                        </button>
+                        <button type="submit" ng-click="stopRun(run)"
+                                ng-show="run.status==='ONGOING'"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>Stop</span>
                         </button>
                     </td>
                 </tr>
