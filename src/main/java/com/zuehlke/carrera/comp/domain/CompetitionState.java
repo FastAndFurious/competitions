@@ -1,5 +1,7 @@
 package com.zuehlke.carrera.comp.domain;
 
+import java.util.List;
+
 /**
  *  represents all of the current state of a competition
  */
@@ -13,6 +15,8 @@ public class CompetitionState {
 
     public CompetitionState() {
     }
+
+    public List<RoundResult> currentBoard;
 
     public CompetitionState ( String name ) {
         this.name = name;

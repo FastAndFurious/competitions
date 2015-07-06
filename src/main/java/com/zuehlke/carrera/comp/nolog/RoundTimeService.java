@@ -3,6 +3,7 @@ package com.zuehlke.carrera.comp.nolog;
 import com.zuehlke.carrera.comp.domain.CompetitionState;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
 import com.zuehlke.carrera.comp.domain.RoundTime;
+import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RoundTimeRepository;
 import com.zuehlke.carrera.comp.repository.SpecialRepo;
@@ -26,8 +27,16 @@ public class RoundTimeService {
     private RoundTimeRepository roundRepository;
 
     @Inject
+    private CompetitionRepository compRepo;
+
+    @Inject
     private SpecialRepo specialRepo;
 
+    /**
+     * Register a round result with the comp manager
+     * @param message the most recent round time
+     * @return the id of the persisted round time
+     */
     public Long register(RoundTimeMessage message) {
 
         RoundTime roundTime = new RoundTime(
@@ -38,11 +47,15 @@ public class RoundTimeService {
 
         FuriousRun run = findOngoingRunOnTrack ( message.getTrack());
 
-        roundTime.setRunId( run.getId());
+        roundTime.setRunId(run.getId());
 
         roundRepository.save(roundTime);
 
-        messagingTemplate.convertAndSend("/topic/rounds", roundTime);
+        //messagingTemplate.convertAndSend("/topic/rounds", roundTime);
+
+        String competition = compRepo.findOne(run.getCompetitionId()).getName();
+
+        updateSubscribers(competition, run.getSessionId());
 
         return roundTime.getId();
     }
@@ -52,13 +65,15 @@ public class RoundTimeService {
         return specialRepo.findOngoingRunOnTrack(track);
     }
 
-    public CompetitionState assembleState () {
-        return new CompetitionState();
+    public CompetitionState assembleState ( String comp, Long sessionId ) {
+        CompetitionState state = new CompetitionState();
+        state.currentBoard = specialRepo.findBestRoundTimes( comp, sessionId );
+        return state;
     }
 
-    @Scheduled(fixedDelay = 300000)
-    public void updateSubscribers () {
-        messagingTemplate.convertAndSend("/topic/status", assembleState());
+    //@Scheduled(fixedDelay = 300000)
+    public void updateSubscribers ( String comp, Long sessionId ) {
+        messagingTemplate.convertAndSend("/topic/status", assembleState(comp, sessionId ));
     }
 
     public List<RoundTime> findAll() {
