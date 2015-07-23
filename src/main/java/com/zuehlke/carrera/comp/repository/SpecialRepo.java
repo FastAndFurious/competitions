@@ -48,6 +48,8 @@ public class SpecialRepo {
         return runRepository.findOne(id.longValue());
     }
 
+    //public List<RoundResult> findLatestRoundTimes ( String comp, Long sessionId, String team ) {}
+
     public List<RoundResult> findBestRoundTimes ( String comp, Long sessionId ) {
 
         String sql = "select min(t.duration), t.team, r.id as \"raceid\", s.id as \"sessionid\", c.name as \"compid\" from " +
@@ -70,12 +72,14 @@ public class SpecialRepo {
 
         List<RoundResult> roundTimes = new ArrayList<>();
 
+        int position = 1;
+
         for ( Object obj : result ) {
                 Object[] row = (Object[]) obj;
             long duration = ((BigInteger) row[0]).longValue();
             String team = (String) row[1];
             String compName = (String) row[4];
-            RoundResult roundResult = new RoundResult(team, sessionId, compName, duration );
+            RoundResult roundResult = new RoundResult(team, sessionId, compName, position++, duration );
             roundTimes.add(roundResult);
         }
 

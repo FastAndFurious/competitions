@@ -45,7 +45,7 @@ angular.module('scoreBoardApp', ['LocalStorageModule', 'tmh.dynamicLocale',
 
     .controller('ScoreBoardController', function ( $scope, Status) {
 
-        $scope.title = "HSR Challenge 2015 - The Grand Final";
+        $scope.title = "Competition not yet started";
 
         Status.receive().then(null, null, function(status) {
             $scope.status = status;

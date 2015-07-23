@@ -66,12 +66,12 @@ public class RoundTimeService {
     }
 
     public CompetitionState assembleState ( String comp, Long sessionId ) {
-        CompetitionState state = new CompetitionState();
+        CompetitionState state = new CompetitionState(comp);
         state.currentBoard = specialRepo.findBestRoundTimes( comp, sessionId );
         return state;
     }
 
-    //@Scheduled(fixedDelay = 300000)
+    //@Scheduled(fixedDelay = 1000)
     public void updateSubscribers ( String comp, Long sessionId ) {
         messagingTemplate.convertAndSend("/topic/status", assembleState(comp, sessionId ));
     }

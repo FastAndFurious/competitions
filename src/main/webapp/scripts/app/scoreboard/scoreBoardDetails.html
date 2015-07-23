@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
-<h1 class="title">{{title}}</h1>
+<h1 class="title">{{status.name}}</h1>
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>Position</th>
             <th>Team</th>
             <th>Best Round Time</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="position in status.currentBoard">
-            <td>{{position.team}}</td>
-            <td>{{position.duration}}</td>
+        <tr ng-repeat="record in status.currentBoard">
+            <td>{{record.position}}</td>
+            <td>{{record.team}}</td>
+            <td>{{record.duration}}</td>
         </tr>
         </tbody>
     </table>

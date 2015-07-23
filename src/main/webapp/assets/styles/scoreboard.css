@@ -1,4 +1,15 @@
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspace\/hackathon2015\/carrera\/carrera\.competition\/src\/main\/scss\/scoreboard\.scss}line{font-family:\000031}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\000031}}
 h1.title {
   color: #952351;
+  font-size: 30pt;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\000036}}
+table thead {
+  font-size: 24pt;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\0000310}}
+table tbody {
+  font-size: 20pt;
 }
