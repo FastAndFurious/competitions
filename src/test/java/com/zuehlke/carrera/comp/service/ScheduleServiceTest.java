@@ -8,8 +8,7 @@ import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
-import com.zuehlke.carrera.comp.web.rest.RunRequest;
-import org.joda.time.DateTime;
+import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
@@ -70,13 +69,16 @@ public class ScheduleServiceTest {
         LocalDateTime third = second.plusMinutes(10);
         LocalDateTime fourth = third.plusMinutes(10);
 
-        TeamRegistration wolfies  = new TeamRegistration(1L, "HSR2015", "wolfies", "access", first);
+        String protocol = "rabbit";
+        String encoding = "jason";
+
+        TeamRegistration wolfies  = new TeamRegistration(1L, "HSR2015", "wolfies", "access", protocol, encoding, first);
         teamRepo.save(wolfies);
-        TeamRegistration harries  = new TeamRegistration(2L, "HSR2015", "harries", "access", second);
+        TeamRegistration harries  = new TeamRegistration(2L, "HSR2015", "harries", "access", protocol, encoding, second);
         teamRepo.save(harries);
-        TeamRegistration steffies  = new TeamRegistration(3L, "HSR2015", "steffies", "access", third);
+        TeamRegistration steffies  = new TeamRegistration(3L, "HSR2015", "steffies", "access", protocol, encoding, third);
         teamRepo.save(steffies);
-        TeamRegistration bernies  = new TeamRegistration(4L, "HSR2015", "bernies", "access", fourth);
+        TeamRegistration bernies  = new TeamRegistration(4L, "HSR2015", "bernies", "access", protocol, encoding, fourth);
         teamRepo.save(bernies);
     }
 

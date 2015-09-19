@@ -11,5 +11,6 @@
     <include file="classpath:config/liquibase/changelog/20150612175712_added_entity_TeamRegistration.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20150703123503_added_entity_FuriousRun.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20150706000500_added_column_run_id.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20150919180000_added_columns_to_team_registration.xml" relativeToChangelogFile="false"/>
     <!-- JHipster will add liquibase changelogs here -->
 </databaseChangeLog>

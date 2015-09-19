@@ -8,7 +8,8 @@ import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
-import com.zuehlke.carrera.comp.web.rest.RunRequest;
+import com.zuehlke.carrera.relayapi.messages.RaceActivityMetadata;
+import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  *   manages scheduled runs
@@ -137,7 +137,18 @@ public class ScheduleService {
         TeamRegistration registration = teamRepo.findByTeam(run.getTeam());
 
         String description = createDescription(run, session, comp);
-        return new RunRequest(run.getTeam(), registration.getAccessCode(), session.getTrackId(), description, id );
+
+        String protocol = registration.getProtocol();
+        String encoding = registration.getEncoding();
+
+        // no support in the application by now
+        Set<String> tags = new HashSet<>();
+
+        RaceActivityMetadata metadata = new RaceActivityMetadata(
+                comp.getName(), tags, session.getType().toString(), description );
+
+        return new RunRequest(run.getTeam(), registration.getAccessCode(), protocol, encoding, session.getTrackId(),
+                metadata, id );
     }
 
     private String createDescription ( FuriousRun run, RacingSession session, Competition comp ) {

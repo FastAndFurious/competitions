@@ -1,6 +1,6 @@
 package com.zuehlke.carrera.comp.service;
 
-import com.zuehlke.carrera.comp.web.rest.RunRequest;
+import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.slf4j.Logger;
 
 /**

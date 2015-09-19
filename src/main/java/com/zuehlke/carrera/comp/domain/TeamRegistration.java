@@ -38,6 +38,12 @@ public class TeamRegistration implements Serializable {
     @Column(name = "access_code", nullable = false)
     private String accessCode;
 
+    @Column(name="protocol")
+    private String protocol;
+
+    @Column(name="encoding")
+    private String encoding;
+
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
@@ -46,11 +52,14 @@ public class TeamRegistration implements Serializable {
 
     public TeamRegistration(){} // for JPA
 
-    public TeamRegistration(Long id, String competition, String team, String accessCode, LocalDateTime registrationTime) {
+    public TeamRegistration(Long id, String competition, String team, String accessCode,
+                            String protocol, String encoding, LocalDateTime registrationTime) {
         this.id = id;
         this.competition = competition;
         this.team = team;
         this.accessCode = accessCode;
+        this.protocol = protocol;
+        this.encoding = encoding;
         this.registrationTime = registrationTime;
     }
 
@@ -92,6 +101,22 @@ public class TeamRegistration implements Serializable {
 
     public void setRegistrationTime(LocalDateTime registrationTime) {
         this.registrationTime = registrationTime;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     @Override
