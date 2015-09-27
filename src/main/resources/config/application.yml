@@ -33,4 +33,4 @@ swagger:
     licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
 
 competitions:
-    relayUrl: http://localhost:8085/ws/rest/raceTracks/
+    relayUrl: http://localhost:8090/ws/rest/raceTracks/
