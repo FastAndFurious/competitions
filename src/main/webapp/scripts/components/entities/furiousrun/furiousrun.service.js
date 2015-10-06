@@ -3,6 +3,7 @@
 angular.module('competitionApp')
     .factory('FuriousRun', function ($resource) {
         return $resource('api/furiousruns/:cmd/:id', {}, {
+            'start' : { method: 'GET', isArray: false},
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

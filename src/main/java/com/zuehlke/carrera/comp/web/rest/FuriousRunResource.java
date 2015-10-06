@@ -95,12 +95,17 @@ public class FuriousRunResource {
      */
     @RequestMapping(value = "/furiousruns/start/{id}",
             method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.TEXT_PLAIN_VALUE)
     @Timed
-    public ResponseEntity<Void> startRun( @PathVariable Long id) {
-        log.debug("REST request to start run {}", id);
-        scheduleService.startRun(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> startRun( @PathVariable Long id) {
+        log.info("REST request to start run {}", id);
+        ServiceResult result = scheduleService.startRun(id);
+        if ( result.getStatus() == ServiceResult.Status.OK ) {
+            return ResponseEntity.ok("Success");
+        } else {
+            return ResponseEntity.badRequest().body(result.getMessage());
+        }
+
     }
 
     /**
@@ -111,7 +116,7 @@ public class FuriousRunResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> stopRun( @PathVariable Long id) {
-        log.debug("REST request to stop run {}", id);
+        log.info("REST request to stop run {}", id);
         scheduleService.stopRun(id);
         return ResponseEntity.ok().build();
     }

@@ -20,7 +20,7 @@ angular.module('competitionApp')
 
         $scope.startRun = function ( run ) {
 
-            FuriousRun.query({'cmd': 'start', 'id': run.id}, function(result) {
+            FuriousRun.start({'cmd': 'start', 'id': run.id}, function(result) {
 
                 if ( result ) {
                     $scope.loadAll(run.sessionId);

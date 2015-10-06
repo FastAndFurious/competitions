@@ -8,6 +8,7 @@ import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.web.rest.ServiceResult;
 import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -116,14 +117,15 @@ public class ScheduleServiceTest {
         @Bean RelayApi relayApi() {
             return new RelayApi() {
                 @Override
-                public boolean startRun(RunRequest request, Logger logger) {
+                public ServiceResult startRun(RunRequest request, Logger logger) {
                     results.put("request", request);
-                    return true;
+                    return new ServiceResult(ServiceResult.Status.OK, "OK");
                 }
 
                 @Override
-                public boolean stopRun ( RunRequest request, Logger logger ) {
-                    return true;
+                public ServiceResult stopRun ( RunRequest request, Logger logger ) {
+
+                    return new ServiceResult(ServiceResult.Status.OK, "OK");
                 }
             };
         }

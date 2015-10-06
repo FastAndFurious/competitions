@@ -8,6 +8,7 @@ import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.web.rest.ServiceResult;
 import com.zuehlke.carrera.relayapi.messages.RaceActivityMetadata;
 import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDateTime;
@@ -102,22 +103,22 @@ public class ScheduleService {
     }
 
     @Transactional
-    public boolean startRun(Long id) {
+    public ServiceResult startRun(Long id) {
 
         FuriousRun run = runRepo.findOne(id);
         RunRequest request = getRunRequest(id, run);
 
-        boolean success = relayApi.startRun(request, LOGGER);
-        if ( success ) {
+        ServiceResult result = relayApi.startRun(request, LOGGER);
+        if ( result.getStatus() == ServiceResult.Status.OK ) {
             run.setStatus(FuriousRun.Status.ONGOING);
             runRepo.save(run);
         }
 
-        return success;
+        return result;
     }
 
 
-    public boolean stopRun(Long id) {
+    public ServiceResult stopRun(Long id) {
 
         FuriousRun run = runRepo.findOne(id);
         run.setStatus(FuriousRun.Status.QUALIFIED);
@@ -125,9 +126,7 @@ public class ScheduleService {
 
         RunRequest request = getRunRequest(id, run);
 
-        boolean success = relayApi.stopRun(request, LOGGER);
-
-        return success;
+        return relayApi.stopRun(request, LOGGER);
 
     }
 
