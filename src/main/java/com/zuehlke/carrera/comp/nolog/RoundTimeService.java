@@ -4,12 +4,10 @@ import com.zuehlke.carrera.comp.domain.CompetitionState;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
 import com.zuehlke.carrera.comp.domain.RoundTime;
 import com.zuehlke.carrera.comp.repository.CompetitionRepository;
-import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RoundTimeRepository;
 import com.zuehlke.carrera.comp.repository.SpecialRepo;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -51,8 +49,6 @@ public class RoundTimeService {
 
         roundRepository.save(roundTime);
 
-        //messagingTemplate.convertAndSend("/topic/rounds", roundTime);
-
         String competition = compRepo.findOne(run.getCompetitionId()).getName();
 
         updateSubscribers(competition, run.getSessionId());
@@ -71,8 +67,7 @@ public class RoundTimeService {
         return state;
     }
 
-    //@Scheduled(fixedDelay = 1000)
-    public void updateSubscribers ( String comp, Long sessionId ) {
+    private void updateSubscribers ( String comp, Long sessionId ) {
         messagingTemplate.convertAndSend("/topic/status", assembleState(comp, sessionId ));
     }
 

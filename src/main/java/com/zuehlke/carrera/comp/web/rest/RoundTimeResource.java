@@ -38,7 +38,7 @@ public class RoundTimeResource {
     @Timed
     @ResponseBody
     public ResponseEntity<Void> register(@Valid @RequestBody RoundTimeMessage message ) throws URISyntaxException {
-        log.debug("REST request to register Round Time: {}", message);
+        log.info("REST request to register Round Time: {}", message);
         if (message.getTrack() == null) {
             return ResponseEntity.badRequest().header("Failure", "A RoundTimeMessage must name the track").build();
         }
@@ -56,7 +56,7 @@ public class RoundTimeResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public List<RoundTime> getAll() {
-        log.debug("REST request to get all Competitions");
+        log.info("REST request to get all Competitions");
         return roundTimeService.findAll();
     }
 
@@ -68,7 +68,7 @@ public class RoundTimeResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<RoundTime> get(@PathVariable Long id) {
-        log.debug("REST request to get Competition : {}", id);
+        log.info("REST request to get Competition : {}", id);
         return Optional.ofNullable(roundTimeService.findOne(id))
             .map(roundTime -> new ResponseEntity<>(
                 roundTime,
@@ -84,7 +84,7 @@ public class RoundTimeResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void delete(@PathVariable Long id) {
-        log.debug("REST request to delete Competition : {}", id);
+        log.info("REST request to delete Competition : {}", id);
         roundTimeService.delete(id);
     }
 }
