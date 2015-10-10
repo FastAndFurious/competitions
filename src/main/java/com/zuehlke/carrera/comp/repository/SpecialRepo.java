@@ -48,7 +48,9 @@ public class SpecialRepo {
         return runRepository.findOne(id.longValue());
     }
 
-    //public List<RoundResult> findLatestRoundTimes ( String comp, Long sessionId, String team ) {}
+    public List<RoundResult> findLatestRoundTimes ( String comp, Long sessionId, String team, int noResults ) {
+        return new ArrayList<>();
+    }
 
     public List<RoundResult> findBestRoundTimes ( String comp, Long sessionId ) {
 

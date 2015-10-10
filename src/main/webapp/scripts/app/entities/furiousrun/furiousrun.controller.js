@@ -25,6 +25,9 @@ angular.module('competitionApp')
                 if ( result ) {
                     $scope.loadAll(run.sessionId);
                 }
+            }, function ( error ) {
+                $scope.currentErrorMessage = error.data.message;
+                $('#errorMessageModal').modal('show');
             });
         };
 
