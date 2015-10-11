@@ -1,13 +1,11 @@
 package com.zuehlke.carrera.comp.service;
 
-import com.zuehlke.carrera.comp.domain.Competition;
-import com.zuehlke.carrera.comp.domain.FuriousRun;
-import com.zuehlke.carrera.comp.domain.RacingSession;
-import com.zuehlke.carrera.comp.domain.TeamRegistration;
+import com.zuehlke.carrera.comp.domain.*;
 import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.ServiceResult;
 import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDate;
@@ -19,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -86,14 +85,14 @@ public class ScheduleServiceTest {
     @Test
     public void testFirstTrainingSchedule() {
 
-        List<FuriousRun> schedule = service.findOrCreateForSession(1L);
+        List<FuriousRunDto> schedule = service.findOrCreateForSession(1L);
 
         Assert.assertEquals(4, schedule.size());
     }
 
     @Test
     public void testStartRun () {
-        List<FuriousRun> schedule = service.findOrCreateForSession(1L);
+        List<FuriousRunDto> schedule = service.findOrCreateForSession(1L);
 
         service.startRun(schedule.get(0).getId());
 
@@ -108,6 +107,29 @@ public class ScheduleServiceTest {
         private List<TeamRegistration> team_db = new ArrayList<>();
         private List<RacingSession> session_db = new ArrayList<>();
         private List<Competition> comp_db = new ArrayList<>();
+
+
+        @Bean
+        PilotInfoResource pilotInfoResource() {
+            return new PilotInfoResource() {
+                @Override
+                public PilotInfo retrieveInfo () {
+                    return new PilotInfo();
+                }
+            };
+        }
+
+        @Bean
+        public static PropertySourcesPlaceholderConfigurer properties() throws Exception {
+            final PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+            Properties properties = new Properties();
+
+            properties.setProperty("competitions.pilotInfoUrl", "http://anywhere:8080/pilot/info");
+
+            pspc.setProperties(properties);
+            return pspc;
+        }
+
 
         @Bean
         ScheduleService scheduleService () {

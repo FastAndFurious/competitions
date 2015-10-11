@@ -34,3 +34,4 @@ swagger:
 
 competitions:
     relayUrl: http://localhost:8090/ws/rest/raceTracks/
+    pilotInfoUrl: http://localhost:8090/ws/rest/pilots/info

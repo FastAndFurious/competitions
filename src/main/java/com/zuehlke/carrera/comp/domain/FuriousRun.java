@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zuehlke.carrera.comp.domain.util.CustomDateTimeDeserializer;
 import com.zuehlke.carrera.comp.domain.util.CustomDateTimeSerializer;
+import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -24,30 +25,30 @@ public class FuriousRun implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    protected Long id;
 
     @NotNull
     @Column(name = "team", nullable = false)
-    private String team;
+    protected String team;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
     @Column(name = "scheduled_start_date", nullable = false)
-    private LocalDateTime scheduledStartDate;
+    protected LocalDateTime scheduledStartDate;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
+    protected LocalDateTime startDate;
 
-    private Long sessionId;
+    protected Long sessionId;
 
-    private Long competitionId;
+    protected Long competitionId;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    protected Status status;
 
     public FuriousRun () {} // for JPA
 
@@ -131,6 +132,7 @@ public class FuriousRun implements Serializable {
 
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
@@ -155,4 +157,5 @@ public class FuriousRun implements Serializable {
         QUALIFIED,
         DISQUALIFIED
     }
+
 }

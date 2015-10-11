@@ -2,6 +2,7 @@ package com.zuehlke.carrera.comp.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
+import com.zuehlke.carrera.comp.domain.FuriousRunDto;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.service.ScheduleService;
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class FuriousRunResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<FuriousRun> getSchedule( @PathVariable Long sessionId) {
+    public List<FuriousRunDto> getSchedule( @PathVariable Long sessionId) {
         log.debug("REST request to get all Runs for session ");
         return scheduleService.findOrCreateForSession(sessionId);
     }
