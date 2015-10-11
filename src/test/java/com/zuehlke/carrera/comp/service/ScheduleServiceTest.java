@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
+import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
@@ -108,6 +109,17 @@ public class ScheduleServiceTest {
         private List<RacingSession> session_db = new ArrayList<>();
         private List<Competition> comp_db = new ArrayList<>();
 
+
+        @Bean
+        CompetitionStatePublisher publisher () {
+            return new CompetitionStatePublisher(){
+
+                @Override
+                public void publish(String competition, Long sessionId, String team) {
+                    // do nothing
+                }
+            };
+        }
 
         @Bean
         PilotInfoResource pilotInfoResource() {
@@ -284,6 +296,11 @@ public class ScheduleServiceTest {
                 public List<FuriousRun> findBySessionId(Long sessionId) {
                     return run_db.stream().filter(furiousRun -> furiousRun.getSessionId().equals(sessionId))
                             .collect(Collectors.toCollection(ArrayList::new));
+                }
+
+                @Override
+                public FuriousRun findOneBySessionIdAndTeam(Long sessionId, String team) {
+                    return null;
                 }
 
                 @Override
@@ -471,7 +488,7 @@ public class ScheduleServiceTest {
 
                 @Override
                 public Competition findOne(Long aLong) {
-                    return null;
+                    return getOne(aLong);
                 }
 
                 @Override

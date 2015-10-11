@@ -9,14 +9,14 @@ public class CompetitionState {
 
     private String name;
     private final long snapshotTime = System.currentTimeMillis();
+    private List<RoundResult> currentBoard;
+    private RecentRunInfo recentRunInfo;
 
     private long scheduledStartTime;
     private Phase phase = Phase.SCHEDULED;
 
     public CompetitionState() {
     }
-
-    public List<RoundResult> currentBoard;
 
     public CompetitionState ( String name ) {
         this.name = name;
@@ -48,5 +48,21 @@ public class CompetitionState {
 
     public void setPhase(Phase phase) {
         this.phase = phase;
+    }
+
+    public List<RoundResult> getCurrentBoard() {
+        return currentBoard;
+    }
+
+    public void setCurrentBoard(List<RoundResult> currentBoard) {
+        this.currentBoard = currentBoard;
+    }
+
+    public RecentRunInfo getRecentRunInfo() {
+        return recentRunInfo;
+    }
+
+    public void setRecentRunInfo(RecentRunInfo recentRunInfo) {
+        this.recentRunInfo = recentRunInfo;
     }
 }

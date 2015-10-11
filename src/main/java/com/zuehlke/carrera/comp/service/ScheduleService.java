@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
+import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.CompetitionRepository;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
@@ -13,9 +14,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -42,6 +41,9 @@ public class ScheduleService {
     @Autowired
     private PilotInfoResource pilotInfoResource;
 
+    @Autowired
+    private CompetitionStatePublisher publisher;
+
     public List<FuriousRunDto> findOrCreateForSession(Long sessionId) {
 
         List<FuriousRun> runs = runRepo.findBySessionId(sessionId);
@@ -55,7 +57,7 @@ public class ScheduleService {
     }
 
     /**
-     * enrichtes the FuriousRun entities with recent info about the pilot lifesigns
+     * enriches the FuriousRun entities with recent info about the pilot lifesigns
      *
      * @param runs the original list of runs
      * @return a list of dtos with additional status info
@@ -159,11 +161,13 @@ public class ScheduleService {
 
         FuriousRun run = runRepo.findOne(id);
         RunRequest request = getRunRequest(id, run);
+        Competition comp = compRepo.findOne(run.getCompetitionId());
 
         ServiceResult result = relayApi.startRun(request, LOGGER);
         if (result.getStatus() == ServiceResult.Status.OK) {
             run.setStatus(FuriousRun.Status.ONGOING);
             runRepo.save(run);
+            publisher.publish(comp.getName(), run.getSessionId(), run.getTeam());
         }
 
         return result;
@@ -176,8 +180,10 @@ public class ScheduleService {
         run.setStatus(FuriousRun.Status.QUALIFIED);
         runRepo.save(run);
 
-        RunRequest request = getRunRequest(id, run);
+        RacingSession session = sessionRepo.findOne(run.getSessionId());
+        publisher.publish(session.getCompetition(), run.getSessionId(), null);
 
+        RunRequest request = getRunRequest(id, run);
         return relayApi.stopRun(request, LOGGER);
 
     }

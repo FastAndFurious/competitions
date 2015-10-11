@@ -45,10 +45,25 @@ angular.module('scoreBoardApp', ['LocalStorageModule', 'tmh.dynamicLocale',
 
     .controller('ScoreBoardController', function ( $scope, Status) {
 
+        $scope.display = "MAIN";
+
         $scope.title = "Competition not yet started";
 
         Status.receive().then(null, null, function(status) {
             $scope.status = status;
+
+            if ( status.recentRunInfo == null ) {
+                $scope.display = "MAIN";
+            } else {
+                $scope.display = "ONGOING";
+            }
         });
 
+        $scope.showMain = function () {
+            return $scope.display === "MAIN";
+        };
+
+        $scope.showOngoing = function () {
+            return $scope.display === "ONGOING";
+        };
     });
