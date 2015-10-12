@@ -117,7 +117,12 @@ public class SpecialRepo {
             long duration = ((BigInteger) row[0]).longValue();
             String team = (String) row[1];
             String compName = (String) row[4];
-            int rownum = ((Double) row[5]).intValue();
+            int rownum = 0;
+            if ( row[5] instanceof BigInteger ) { // this happens on the ubuntu database
+                rownum = ((BigInteger) row[5]).intValue();
+            } else {
+                rownum = ((Double) row[5]).intValue();
+            }
             RoundResult roundResult = new RoundResult(team, sessionId, compName, rownum, duration );
             roundTimes.add(roundResult);
         }
