@@ -29,7 +29,7 @@ public class FuriousRunRepositoryTest {
     @Test
     public void testSaveAndRetrieve() {
 
-        FuriousRun run = new FuriousRun("koba", new LocalDateTime(), new LocalDateTime(), 1L, 1L, FuriousRun.Status.SCHEDULED);
+        FuriousRun run = new FuriousRun("koba", new LocalDateTime(), new LocalDateTime(), 1L, 1L, FuriousRun.Status.SCHEDULED, 1);
 
         repo.save ( run );
 

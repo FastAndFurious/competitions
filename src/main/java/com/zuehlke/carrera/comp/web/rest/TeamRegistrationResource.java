@@ -3,6 +3,7 @@ package com.zuehlke.carrera.comp.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.TeamRegistration;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class TeamRegistrationResource {
         if (teamRegistration.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new teamRegistration cannot already have an ID").build();
         }
+        teamRegistration.setRegistrationTime(new LocalDateTime());
         teamRegistrationRepository.save(teamRegistration);
         return ResponseEntity.created(new URI("/api/teamRegistrations/" + teamRegistration.getId())).build();
     }

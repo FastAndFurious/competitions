@@ -26,7 +26,7 @@ public class RoundTimeService {
     private SpecialRepo specialRepo;
 
     @Inject
-    private StompCompetitionStatePublisher publisher;
+    private CompetitionStatePublisher publisher;
 
     /**
      * Register a round result with the comp manager

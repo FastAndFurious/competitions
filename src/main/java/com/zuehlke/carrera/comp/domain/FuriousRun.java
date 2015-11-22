@@ -47,18 +47,23 @@ public class FuriousRun implements Serializable {
 
     protected Long competitionId;
 
+    @Column(name = "start_position")
+    protected int startPosition;
+
     @Enumerated(EnumType.STRING)
     protected Status status;
 
     public FuriousRun () {} // for JPA
 
-    public FuriousRun(String team, LocalDateTime scheduledStartDate, LocalDateTime startDate, Long sessionId, Long competitionId, Status status) {
+    public FuriousRun(String team, LocalDateTime scheduledStartDate, LocalDateTime startDate, Long sessionId, Long competitionId, Status status, int position ) {
         this.team = team;
         this.scheduledStartDate = scheduledStartDate;
         this.startDate = startDate;
         this.sessionId = sessionId;
         this.competitionId = competitionId;
         this.status = status;
+        this.startPosition = position;
+
     }
 
     public Long getId() {
@@ -115,6 +120,14 @@ public class FuriousRun implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getStartPosition() {
+        return startPosition;
+    }
+
+    public void setStartPosition(int startPosition) {
+        this.startPosition = startPosition;
     }
 
     @Override

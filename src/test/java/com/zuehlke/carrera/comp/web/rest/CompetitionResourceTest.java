@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = CompetitionManagerApp.class)
 @WebAppConfiguration
 @IntegrationTest
+@Transactional
 public class CompetitionResourceTest {
 
     private static final String DEFAULT_NAME = "SAMPLE_TEXT";

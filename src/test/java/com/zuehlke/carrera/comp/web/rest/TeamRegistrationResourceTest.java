@@ -41,9 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class TeamRegistrationResourceTest {
 
-    private static final DateTimeFormatter dateTimeFormatter =
-            DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
     private static final String DEFAULT_COMPETITION = "SAMPLE_TEXT";
     private static final String UPDATED_COMPETITION = "UPDATED_TEXT";
     private static final String DEFAULT_TEAM = "SAMPLE_TEXT";
@@ -52,8 +49,6 @@ public class TeamRegistrationResourceTest {
     private static final LocalDateTime DEFAULT_REGISTRATION_TIME = new LocalDateTime(0L);
     private static final LocalDateTime UPDATED_REGISTRATION_TIME = new LocalDateTime()
             .withSecondOfMinute(0).withMillisOfSecond(0);
-    private static final String DEFAULT_REGISTRATION_TIME_STR = dateTimeFormatter.print(DEFAULT_REGISTRATION_TIME);
-
     @Inject
     private TeamRegistrationRepository teamRegistrationRepository;
 
@@ -95,7 +90,6 @@ public class TeamRegistrationResourceTest {
         TeamRegistration testTeamRegistration = teamRegistrations.get(teamRegistrations.size() - 1);
         assertThat(testTeamRegistration.getCompetition()).isEqualTo(DEFAULT_COMPETITION);
         assertThat(testTeamRegistration.getTeam()).isEqualTo(DEFAULT_TEAM);
-        assertThat(testTeamRegistration.getRegistrationTime()).isEqualTo(DEFAULT_REGISTRATION_TIME);
     }
 
     @Test
@@ -147,9 +141,8 @@ public class TeamRegistrationResourceTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(teamRegistration.getId().intValue())))
-                .andExpect(jsonPath("$.[*].competition").value(hasItem(DEFAULT_COMPETITION.toString())))
-                .andExpect(jsonPath("$.[*].team").value(hasItem(DEFAULT_TEAM.toString())))
-                .andExpect(jsonPath("$.[*].registrationTime").value(hasItem(DEFAULT_REGISTRATION_TIME_STR)));
+                .andExpect(jsonPath("$.[*].competition").value(hasItem(DEFAULT_COMPETITION)))
+                .andExpect(jsonPath("$.[*].team").value(hasItem(DEFAULT_TEAM)));
     }
 
     @Test
@@ -163,9 +156,8 @@ public class TeamRegistrationResourceTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(teamRegistration.getId().intValue()))
-            .andExpect(jsonPath("$.competition").value(DEFAULT_COMPETITION.toString()))
-            .andExpect(jsonPath("$.team").value(DEFAULT_TEAM.toString()))
-            .andExpect(jsonPath("$.registrationTime").value(DEFAULT_REGISTRATION_TIME_STR));
+            .andExpect(jsonPath("$.competition").value(DEFAULT_COMPETITION))
+            .andExpect(jsonPath("$.team").value(DEFAULT_TEAM));
     }
 
     @Test

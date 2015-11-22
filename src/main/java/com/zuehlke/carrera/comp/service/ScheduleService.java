@@ -2,10 +2,7 @@ package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
 import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
-import com.zuehlke.carrera.comp.repository.CompetitionRepository;
-import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
-import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
-import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.repository.*;
 import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.ServiceResult;
 import com.zuehlke.carrera.relayapi.messages.RaceActivityMetadata;
@@ -37,12 +34,12 @@ public class ScheduleService {
     private RacingSessionRepository sessionRepo;
     @Autowired
     private RelayApi relayApi;
-
     @Autowired
     private PilotInfoResource pilotInfoResource;
-
     @Autowired
     private CompetitionStatePublisher publisher;
+    @Autowired
+    private SpecialRepo specialRepo;
 
     public List<FuriousRunDto> findOrCreateForSession(Long sessionId) {
 
@@ -64,14 +61,14 @@ public class ScheduleService {
      */
     private List<FuriousRunDto> enrichWithLifeSignInfo(List<FuriousRun> runs) {
 
-        PilotInfo response = pilotInfoResource.retrieveInfo();
+        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
 
         List<FuriousRunDto> dtos = new ArrayList<>();
 
         runs.stream().forEach((FuriousRun run) -> dtos.add(new FuriousRunDto(run)));
 
         dtos.forEach(
-                (run) -> response.getPilotLifeSigns().stream().filter(
+                (run) -> pilotInfo.getPilotLifeSigns().stream().filter(
                         (l) -> l.getTeamId().equals(run.getTeam())
                 ).forEach((l) -> {
                             run.setPilotLifeSign(l);
@@ -112,21 +109,64 @@ public class ScheduleService {
 
         List<TeamRegistration> registrations = teamRepo.findByCompetition(comp.getName());
 
-        if (session.getType().equals(RacingSession.SessionType.Training)) {
-            if (session.getSeqNo() == 1) {
-                return createScheduleForFirstTraining(registrations, comp, session);
-            } else {
-                return createScheduleForSubsequentTrainings(session, registrations);
-            }
-        } else {
+        switch ( session.getType()) {
+            case Training:
+                return createScheduleForTraining(registrations, comp, session);
+            case Qualifying:
+                return createScheduleForQualifying ( comp, session );
+            case Competition:
+                return createScheduleForCompetition ( comp, session );
+            default:
+                throw new IllegalStateException("Can't create schedule for " + session.getType() + ". Not implemented.");
+        }
+    }
+
+    /**
+     * schedule for qualifying: the best training run entitles for the best position: the last.
+     * @param session the qualifying session to schedule for
+     * @return
+     */
+    private List<FuriousRun> createScheduleForQualifying(Competition comp, RacingSession session) {
+
+        RacingSession trainingSession = findSession( session.getCompetition(), RacingSession.SessionType.Training);
+
+        List<RoundResult> trainingResults = specialRepo.findBestRoundTimes(session.getCompetition(), trainingSession.getId());
+
+        if ( trainingResults.size() == 0 ) {
             return new ArrayList<>();
         }
 
+        List<FuriousRun> schedule = new ArrayList<>();
+
+        LocalDateTime startTime = session.getPlannedStartTime();
+
+        int position = trainingResults.size();
+
+        for (RoundResult result : trainingResults ) {
+            FuriousRun run = new FuriousRun(result.getTeam(), startTime, null, session.getId(),
+                    comp.getId(), FuriousRun.Status.SCHEDULED, position--);
+
+            runRepo.save(run);
+            schedule.add(run);
+        }
+
+        schedule.sort((r,l)->r.getStartPosition()-l.getStartPosition());
+        return schedule;
     }
 
-    private List<FuriousRun> createScheduleForSubsequentTrainings(RacingSession session, List<TeamRegistration> registrations) {
+    private RacingSession findSession(String comp, RacingSession.SessionType type ) {
+        for ( RacingSession s : sessionRepo.findByCompetition(comp)) {
+            if (s.getType() == type) {
+                return s;
+            }
+        }
         return null;
     }
+
+    private List<FuriousRun> createScheduleForCompetition(Competition comp, RacingSession session) {
+        return new ArrayList<>();
+    }
+
 
     /**
      * @param registrations the list of registrations to be considered
@@ -135,8 +175,8 @@ public class ScheduleService {
      * @return a list of runs as the schedule for execution. Here, the earliest registrations earns the best position,
      * which is the last one.
      */
-    private List<FuriousRun> createScheduleForFirstTraining(List<TeamRegistration> registrations,
-                                                            Competition competition, RacingSession session) {
+    private List<FuriousRun> createScheduleForTraining(List<TeamRegistration> registrations,
+                                                       Competition competition, RacingSession session) {
         // Note the reverse ordering! First come - best place, which is the last one
         registrations.sort((l, r) -> r.getRegistrationTime().compareTo(l.getRegistrationTime()));
 
@@ -144,9 +184,11 @@ public class ScheduleService {
 
         LocalDateTime startTime = session.getPlannedStartTime();
 
+        int startPosition = 0;
+
         for (TeamRegistration registration : registrations) {
             FuriousRun run = new FuriousRun(registration.getTeam(), startTime, null, session.getId(),
-                    competition.getId(), FuriousRun.Status.SCHEDULED);
+                    competition.getId(), FuriousRun.Status.SCHEDULED, startPosition ++);
 
             runRepo.save(run);
             schedule.add(run);
