@@ -42,7 +42,9 @@ public class TeamRegistrationResource {
         if (teamRegistration.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new teamRegistration cannot already have an ID").build();
         }
-        teamRegistration.setRegistrationTime(new LocalDateTime());
+        if ( teamRegistration.getRegistrationTime() == null ) {
+            teamRegistration.setRegistrationTime(new LocalDateTime());
+        }
         teamRegistrationRepository.save(teamRegistration);
         return ResponseEntity.created(new URI("/api/teamRegistrations/" + teamRegistration.getId())).build();
     }
