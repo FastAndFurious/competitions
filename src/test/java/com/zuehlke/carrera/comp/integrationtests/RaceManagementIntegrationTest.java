@@ -2,6 +2,7 @@ package com.zuehlke.carrera.comp.integrationtests;
 
 import com.zuehlke.carrera.comp.CompetitionManagerApp;
 import com.zuehlke.carrera.comp.domain.*;
+import com.zuehlke.carrera.comp.service.MockCompetitionStatePublisher;
 import com.zuehlke.carrera.comp.web.rest.*;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import org.joda.time.LocalDate;
@@ -20,6 +21,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,8 @@ public class RaceManagementIntegrationTest {
     private static final String COMPETITION_NAME = "TEST_COMPETITION";
     private static final String TRACK_ID = "TRACK_ID";
     private static final Map<Long, Map<Long, Long[]>> roundTimes = new HashMap<>();
+    private static final List<Integer[]> scores = new ArrayList<>();
+    private static final Map<String, Integer> names = new HashMap<>();
 
     @Autowired
     private CompetitionResource competitionResource;
@@ -53,19 +57,48 @@ public class RaceManagementIntegrationTest {
     @Autowired
     private RoundTimeResource roundTimeResource;
 
+    @Autowired
+    MockCompetitionStatePublisher publisher;
+
+    private int roundEventCounter;
+
     @Before
     public void init () {
         for ( Long l = 1L; l <= 4L; l++ ) {
             roundTimes.put ( l, new HashMap<>());
         }
         // Training bernies
-        roundTimes.get(1L).put(1L, new Long[]{10001L, 10002L, 10002L, 10000L, 10001L, 10004L, 10008L, 10007L, 10005L});
+        roundTimes.get(1L).put(1L, new Long[]{35000L, 24000L, 19000L});
         // Training steffies
-        roundTimes.get(1L).put(2L, new Long[]{20001L, 20002L, 20002L, 20000L, 20001L, 20004L, 20008L, 20007L, 20005L});
+        roundTimes.get(1L).put(2L, new Long[]{41000L, 28000L, 25000L});
         // Training harries
-        roundTimes.get(1L).put(3L, new Long[]{30001L, 30002L, 30002L, 30000L, 30001L, 30004L, 30008L, 30007L, 30005L});
+        roundTimes.get(1L).put(3L, new Long[]{45000L, 35000L, 29000L});
         // Training wolfies
-        roundTimes.get(1L).put(4L, new Long[]{40001L, 40002L, 40002L, 40000L, 40001L, 40004L, 40008L, 40007L, 40005L});
+        roundTimes.get(1L).put(4L, new Long[]{40000L, 30000L, 20000L});
+
+        // in the order w, h, s, b
+        // Wolfie's rounds
+        scores.add(new Integer[]{1,0,0,0});
+        scores.add(new Integer[]{1,0,0,0});
+        scores.add(new Integer[]{1,0,0,0});
+        // Harrie's rounds
+        scores.add(new Integer[]{1,2,0,0});
+        scores.add(new Integer[]{1,2,0,0});
+        scores.add(new Integer[]{1,2,0,0});
+        // Steffie's rounds
+        scores.add(new Integer[]{1,2,3,0});
+        scores.add(new Integer[]{1,3,2,0});
+        scores.add(new Integer[]{1,3,2,0});
+        // Bernie's rounds
+        scores.add(new Integer[]{1,3,2,4});
+        scores.add(new Integer[]{1,4,3,2});
+        scores.add(new Integer[]{2,4,3,1});
+
+        names.put("wolfies", 0);
+        names.put("harries", 1);
+        names.put("steffies", 2);
+        names.put("bernies", 3);
+
     }
 
 
@@ -93,13 +126,15 @@ public class RaceManagementIntegrationTest {
 
     private void simulate_training_runs() {
 
-        for ( String team : new String[]{"bernies", "steffies", "harries", "wolfies"}) {
+        roundEventCounter = 0;
+
+        for ( String team : new String[]{"wolfies", "harries", "steffies", "bernies"}) {
 
             simulate_training_start ( team );
         }
 
         List<RoundTime> roundTimes = roundTimeResource.getAll();
-        Assert.assertEquals ( 36, roundTimes.size() );
+        Assert.assertEquals ( 12, roundTimes.size() );
     }
 
     private void simulate_training_start(String team) {
@@ -119,10 +154,27 @@ public class RaceManagementIntegrationTest {
 
     private void simulate_roundTimes(String team, Long sessionId, Long runId) throws URISyntaxException {
 
-        for ( int round = 0; round < 9; round ++ ) {
+        for ( int round = 0; round < 3; round ++ ) {
             RoundTimeMessage message = new RoundTimeMessage(TRACK_ID, team, System.currentTimeMillis(),
                     roundTimes.get(sessionId).get(runId)[round]);
             roundTimeResource.register(message);
+
+            assertState ( roundEventCounter++, publisher.getState());
+        }
+    }
+
+
+    private void assertState(int roundEvent, CompetitionState state) {
+
+        Integer[] score = scores.get(roundEvent);
+
+        for ( int pos = 0; pos < state.getCurrentBoard().size(); pos ++ ) {
+            String team = state.getCurrentBoard().get(pos).getTeam();
+            int id = names.get(team);
+            if ( score[id] != pos + 1 ) {
+                System.out.println("STOP!");
+            }
+            Assert.assertEquals((long) score[id], pos+1);
         }
     }
 
@@ -153,9 +205,9 @@ public class RaceManagementIntegrationTest {
                 Assert.assertEquals(0, runs.size());
             } else {
                 Assert.assertEquals(4, runs.size());
-                Assert.assertEquals("wolfies", runs.get(0).getTeam());
-                Assert.assertEquals("harries", runs.get(1).getTeam());
-                Assert.assertEquals("steffies", runs.get(2).getTeam());
+                Assert.assertEquals("harries", runs.get(0).getTeam());
+                Assert.assertEquals("steffies", runs.get(1).getTeam());
+                Assert.assertEquals("wolfies", runs.get(2).getTeam());
                 Assert.assertEquals("bernies", runs.get(3).getTeam());
             }
         });

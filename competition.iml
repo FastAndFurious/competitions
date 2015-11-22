@@ -12,6 +12,29 @@
         </sourceRoots>
       </configuration>
     </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/AsyncConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/audit/AuditEventConverter.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/CacheConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/CloudDatabaseConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/DatabaseConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/JacksonConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/metrics/JHipsterHealthIndicatorConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/LocaleConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/LoggingAspectConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/MailConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/MetricsConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/SecurityConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/apidoc/SwaggerConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/ThymeleafConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/WebConfigurer.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/WebsocketConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/zuehlke/carrera/comp/config/WebsocketSecurityConfiguration.java</file>
+        </fileset>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
@@ -208,5 +231,6 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-el:8.0.23" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-logging-juli:8.0.23" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:8.0.23" level="project" />
+    <orderEntry type="library" name="competitions node_modules" level="project" />
   </component>
 </module>
