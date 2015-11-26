@@ -48,7 +48,7 @@ public class FuriousRun implements Serializable {
     protected Long competitionId;
 
     @Column(name = "start_position")
-    protected int startPosition;
+    protected Integer startPosition;
 
     @Enumerated(EnumType.STRING)
     protected Status status;
@@ -122,11 +122,11 @@ public class FuriousRun implements Serializable {
         this.status = status;
     }
 
-    public int getStartPosition() {
+    public Integer getStartPosition() {
         return startPosition;
     }
 
-    public void setStartPosition(int startPosition) {
+    public void setStartPosition(Integer startPosition) {
         this.startPosition = startPosition;
     }
 
