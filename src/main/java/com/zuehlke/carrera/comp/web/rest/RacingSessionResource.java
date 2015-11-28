@@ -2,7 +2,10 @@ package com.zuehlke.carrera.comp.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.RacingSession;
+import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
+import com.zuehlke.carrera.comp.service.ErroneousLifeSign;
+import com.zuehlke.carrera.comp.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,6 +32,9 @@ public class RacingSessionResource {
     @Inject
     private RacingSessionRepository racingSessionRepository;
 
+    @Inject
+    private ScheduleService scheduleService;
+
     /**
      * POST  /racingSessions -> Create a new racingSession.
      */
@@ -37,7 +43,7 @@ public class RacingSessionResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> create(@Valid @RequestBody RacingSession racingSession) throws URISyntaxException {
-        log.debug("REST request to save RacingSession : {}", racingSession);
+        log.info("REST request to save RacingSession : {}", racingSession);
         if (racingSession.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new racingSession cannot already have an ID").build();
         }
@@ -53,7 +59,7 @@ public class RacingSessionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> update(@Valid @RequestBody RacingSession racingSession) throws URISyntaxException {
-        log.debug("REST request to update RacingSession : {}", racingSession);
+        log.info("REST request to update RacingSession : {}", racingSession);
         if (racingSession.getId() == null) {
             return create(racingSession);
         }
@@ -109,7 +115,40 @@ public class RacingSessionResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void delete(@PathVariable Long id) {
-        log.debug("REST request to delete RacingSession : {}", id);
+        log.info("REST request to delete RacingSession : {}", id);
         racingSessionRepository.delete(id);
     }
+
+
+    /**
+     * PUT  /racingSessions/newSchedule/:id -> create new schedule for this racingSession.
+     */
+    @RequestMapping(value = "/racingSessions/newSchedule/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> newSchedule(@PathVariable Long id) {
+        log.info("REST request to create new Schedule for RacingSession : {}", id);
+        try {
+            scheduleService.createNewSchedule(id);
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    /**
+     * GET  /racingSessions/newSchedule/:id -> create new schedule for this racingSession.
+     */
+    @RequestMapping(value = "/racingSessions/erroneousLifeSigns",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public List<ErroneousLifeSign> findErroneousLifeSigns () {
+        log.info("REST request to retrieve erroneous life Signs");
+        return scheduleService.findErroneousLifeSigns();
+    }
+
 }

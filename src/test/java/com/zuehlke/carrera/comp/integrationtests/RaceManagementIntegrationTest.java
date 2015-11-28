@@ -2,8 +2,12 @@ package com.zuehlke.carrera.comp.integrationtests;
 
 import com.zuehlke.carrera.comp.CompetitionManagerApp;
 import com.zuehlke.carrera.comp.domain.*;
+import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.service.ErroneousLifeSign;
 import com.zuehlke.carrera.comp.service.MockCompetitionStatePublisher;
+import com.zuehlke.carrera.comp.service.MockPilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.*;
+import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -59,6 +63,13 @@ public class RaceManagementIntegrationTest {
 
     @Autowired
     MockCompetitionStatePublisher publisher;
+
+    @Autowired
+    MockPilotInfoResource pilotInfoResource;
+
+    @Autowired
+    TeamRegistrationRepository teamRepo;
+
 
     private int roundEventCounter;
 
@@ -121,6 +132,28 @@ public class RaceManagementIntegrationTest {
         simulate_training_runs();
 
         create_quali_schedule ( false );
+
+        simulate_lifesigns ();
+
+        erroneousLifeSigns ();
+
+    }
+
+    private void simulate_lifesigns() {
+        long now = System.currentTimeMillis();
+        pilotInfoResource.registerLifeSign ( new PilotLifeSign("wolfies", "no_access", "url", now ));
+        pilotInfoResource.registerLifeSign ( new PilotLifeSign("mummies", "access", "url", now ));
+        pilotInfoResource.registerLifeSign ( new PilotLifeSign("harries", "access", "url", now ));
+        pilotInfoResource.registerLifeSign ( new PilotLifeSign("bernies", "access", "url", now ));
+        pilotInfoResource.registerLifeSign ( new PilotLifeSign("steffies", "access", "url", now ));
+    }
+
+    private void erroneousLifeSigns() {
+
+        List<ErroneousLifeSign> errors = sessionResource.findErroneousLifeSigns();
+        Assert.assertEquals ( 2, errors.size());
+        Assert.assertTrue ( errors.stream().anyMatch(e -> e.getTeamId().equals("mummies")));
+        Assert.assertTrue ( errors.stream().anyMatch(e -> e.getTeamId().equals("wolfies")));
     }
 
 
@@ -236,7 +269,8 @@ public class RaceManagementIntegrationTest {
         TeamRegistration bernies  = new TeamRegistration(null, COMPETITION_NAME, "bernies", "access", protocol, encoding, fourth);
         registrationResource.create(bernies);
 
-        Assert.assertEquals ( 4, registrationResource.getAll().size());
+        TeamRegistration reg = teamRepo.findByTeam("Wolfies");
+        Assert.assertNull ( reg );
     }
 
 

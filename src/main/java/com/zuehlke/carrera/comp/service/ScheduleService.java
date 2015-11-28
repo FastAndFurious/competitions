@@ -5,6 +5,7 @@ import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.*;
 import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.ServiceResult;
+import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import com.zuehlke.carrera.relayapi.messages.RaceActivityMetadata;
 import com.zuehlke.carrera.relayapi.messages.RunRequest;
 import org.joda.time.LocalDateTime;
@@ -41,6 +42,12 @@ public class ScheduleService {
     @Autowired
     private SpecialRepo specialRepo;
 
+    /**
+     * Find the schedule = list of runs planned for this session
+     * Create one if none exists yet
+     * @param sessionId the session id
+     * @return the schedule
+     */
     public List<FuriousRunDto> findOrCreateForSession(Long sessionId) {
 
         List<FuriousRun> runs = runRepo.findBySessionId(sessionId);
@@ -51,6 +58,22 @@ public class ScheduleService {
 
         return enrichWithLifeSignInfo(runs);
 
+    }
+
+    /**
+     * Create a new schedule = list of runs planned for this session
+     * This makes sense if the existing session schedule changes due to corrections or new results.
+     * @param sessionId the session id
+     */
+    public void createNewSchedule(Long sessionId) {
+
+        removeScheduleIfExists ( sessionId );
+        createScheduleForSession( sessionId );
+    }
+
+    private void removeScheduleIfExists(Long sessionId) {
+        List<FuriousRun> schedule = runRepo.findBySessionId(sessionId);
+        schedule.stream().forEach((runRepo::delete));
     }
 
     /**
@@ -77,6 +100,24 @@ public class ScheduleService {
                 ));
 
         return dtos;
+    }
+
+    public List<ErroneousLifeSign> findErroneousLifeSigns () {
+
+        List<ErroneousLifeSign> erroneous = new ArrayList<>();
+        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
+
+        for ( PilotLifeSign lifeSign: pilotInfo.getPilotLifeSigns() ) {
+            TeamRegistration registration = teamRepo.findByTeam( lifeSign.getTeamId() );
+            // This is a weird thing in mysql: String comparison is case insensitive by default!!!
+            if ( registration == null ||  !registration.getTeam().equals(lifeSign.getTeamId())) {
+                erroneous.add(new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.NOT_REGISTERED));
+            } else if ( !registration.getAccessCode().equals(lifeSign.getAccessCode())) {
+                erroneous.add ( new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.INVALID_ACCESS_CODE));
+            }
+        }
+
+        return erroneous;
     }
 
     /**

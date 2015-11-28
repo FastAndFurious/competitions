@@ -14,6 +14,10 @@ angular.module('competitionApp')
                     FuriousRun.query({ 'cmd': 'schedule', 'id': session.id}, function(runs) {
                         $scope.runs = runs;
                     });
+
+                    RacingSession.query({'cmd': 'erroneousLifeSigns' }, function (erroneousLifeSigns) {
+                        $scope.erroneousLifeSigns = erroneousLifeSigns;
+                    })
                 })
             });
         };

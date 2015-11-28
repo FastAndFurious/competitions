@@ -59,4 +59,27 @@
             </tbody>
         </table>
     </div>
+
+    <div ng-if="erroneousLifeSigns.length > 0">
+        <h2>Erroneous Life Signs</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>error code</th>
+                    <th>age in seconds</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="els in erroneousLifeSigns">
+                    <td>{{els.teamId}}</td>
+                    <td>{{els.reason}}</td>
+                    <td>{{els.ageInSeconds}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>

@@ -147,6 +147,12 @@
                                 class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
                         </button>
+                        <button type="submit"
+                                ng-click="newSchedule(racingSession.id)"
+                                ui-sref="runschedule({sessionId:racingSession.id})"
+                                class="btn btn-info">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>New Schedule</span>
+                        </button>
                     </td>
                 </tr>
             </tbody>

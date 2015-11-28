@@ -57,4 +57,11 @@ angular.module('competitionApp')
             $scope.editForm.$setPristine();
             $scope.editForm.$setUntouched();
         };
+
+        $scope.newSchedule = function(sessionId) {
+                RacingSession.query({ 'cmd': 'newSchedule', 'id': sessionId }, function(result) {
+                    $scope.racingSessions = result;
+                });
+        };
+
     });
