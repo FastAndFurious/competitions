@@ -31,6 +31,7 @@ public class FuriousRunDto extends FuriousRun {
         this.team = run.team;
         this.scheduledStartDate = run.scheduledStartDate;
         this.startDate = run.startDate;
+        this.startPosition = run.startPosition;
         this.sessionId = run.sessionId;
         this.competitionId = run.competitionId;
         this.status = run.status;

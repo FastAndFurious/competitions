@@ -28,6 +28,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>Position</th>
                     <th>Team</th>
                     <th>scheduled start</th>
                     <th>actual start</th>
@@ -38,6 +39,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="run in runs">
+                    <td>{{run.startPosition}}</td>
                     <td>{{run.team}}</td>
                     <td>{{run.scheduledStartDate}}</td>
                     <td>{{run.startDate}}</td>

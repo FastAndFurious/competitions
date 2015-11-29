@@ -3,7 +3,10 @@ package com.zuehlke.carrera.comp.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
 import com.zuehlke.carrera.comp.domain.FuriousRunDto;
+import com.zuehlke.carrera.comp.domain.RacingSession;
+import com.zuehlke.carrera.comp.nolog.StompCompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
+import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,12 @@ public class FuriousRunResource {
 
     @Inject
     private ScheduleService scheduleService;
+
+    @Inject
+    private StompCompetitionStatePublisher publisher;
+
+    @Inject
+    private RacingSessionRepository sessionRepository;
 
     /**
      * POST  /furiousruns -> Create a new Run.
@@ -88,6 +97,17 @@ public class FuriousRunResource {
     @Timed
     public List<FuriousRunDto> getSchedule( @PathVariable Long sessionId) {
         log.debug("REST request to get all Runs for session ");
+
+        RacingSession session = sessionRepository.findOne(sessionId);
+        String comp = session.getCompetition();
+        List<FuriousRun> runs = repository.findByStatus(FuriousRun.Status.ONGOING);
+        if ( runs.size() > 0 ) {
+            runs.stream().filter(run -> run.getSessionId() == sessionId).forEach(run -> {
+                publishForRunId(run.getId());
+            });
+        } else {
+            publisher.publish(comp, sessionId, null);
+        }
         return scheduleService.findOrCreateForSession(sessionId);
     }
 
@@ -102,6 +122,7 @@ public class FuriousRunResource {
         log.info("REST request to start run {}", id);
         ServiceResult result = scheduleService.startRun(id);
         if ( result.getStatus() == ServiceResult.Status.OK ) {
+            publishForRunId ( id );
             return ResponseEntity.ok("Success");
         } else {
             return ResponseEntity.badRequest().body(result.getMessage());
@@ -109,8 +130,15 @@ public class FuriousRunResource {
 
     }
 
+    private void publishForRunId(Long id) {
+        FuriousRun run = repository.findOne(id);
+        if ( run == null ) return;
+        RacingSession session = sessionRepository.findOne(run.getSessionId());
+        publisher.publish(session.getCompetition(), run.getSessionId(), run.getTeam());
+    }
+
     /**
-     * PUT /furiousRuns/start/:id -> start the race with id :id
+     * GET /furiousRuns/start/:id -> stop the race with id :id
      */
     @RequestMapping(value = "/furiousruns/stop/{id}",
             method = RequestMethod.GET,
@@ -119,6 +147,18 @@ public class FuriousRunResource {
     public ResponseEntity<Void> stopRun( @PathVariable Long id) {
         log.info("REST request to stop run {}", id);
         scheduleService.stopRun(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * POST /runFinished -> stop the race with id :id
+     */
+    @RequestMapping(value = "/runFinished",
+            method = RequestMethod.POST)
+    @Timed
+    public ResponseEntity<Void> stopRun( @RequestBody String trackId) {
+        log.info("REST request to stop run {}", trackId);
+        scheduleService.stopRunOnTrack(trackId);
         return ResponseEntity.ok().build();
     }
 

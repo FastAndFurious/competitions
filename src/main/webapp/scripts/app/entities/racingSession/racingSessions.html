@@ -31,19 +31,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label translate="competitionApp.racingSession.type">Type</label>
+                            <label>Session Type</label>
                             <input type="text" class="form-control" name="type"
                                    ng-model="racingSession.type">
 
                         </div>
                         <div class="form-group">
-                            <label translate="competitionApp.racingSession.seqNo">SeqNo</label>
+                            <label>Number</label>
                             <input type="number" class="form-control" name="seqNo"
                                    ng-model="racingSession.seqNo">
 
                         </div>
                         <div class="form-group">
-                            <label translate="competitionApp.racingSession.plannedStartTime">PlannedStartTime</label>
+                            <label>Run Duration</label>
+                            <input type="number" class="form-control" name="runDuration"
+                                   ng-model="racingSession.runDuration">
+
+                        </div>
+                        <div class="form-group">
+                            <label >Planned Start Time</label>
                             <input type="datetime-local" class="form-control" name="plannedStartTime"
                                    ng-model="racingSession.plannedStartTime" ng-model-options="{timezone: 'UTC'}">
 
@@ -118,6 +124,7 @@
                 <tr>
                     <th>Type</th>
                     <th>Sequence Number</th>
+                    <th>Run Duration</th>
                     <th>PlannedStartTime</th>
                     <th>Track Name</th>
                     <th>Track Layout</th>
@@ -128,6 +135,7 @@
                 <tr ng-repeat="racingSession in racingSessions">
                     <td>{{racingSession.type}}</td>
                     <td>{{racingSession.seqNo}}</td>
+                    <td>{{racingSession.runDuration}}</td>
                     <td>{{racingSession.plannedStartTime}}</td>
                     <td>{{racingSession.trackId}}</td>
                     <td>{{racingSession.trackLayout}}</td>

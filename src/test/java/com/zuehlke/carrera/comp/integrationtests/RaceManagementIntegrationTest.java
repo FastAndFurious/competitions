@@ -277,16 +277,16 @@ public class RaceManagementIntegrationTest {
     private void create_sessions() throws URISyntaxException {
 
         RacingSession training = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Training,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood");
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60);
         ResponseEntity<Void> result = sessionResource.create(training);
         Assert.assertEquals ( HttpStatus.CREATED, result.getStatusCode());
 
         RacingSession quali = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Qualifying,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood");
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60 );
         sessionResource.create(quali);
 
         RacingSession finale = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Competition,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood");
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60);
         sessionResource.create(finale);
 
         Assert.assertEquals ( 3, sessionResource.findByCompetition(COMPETITION_NAME).size());

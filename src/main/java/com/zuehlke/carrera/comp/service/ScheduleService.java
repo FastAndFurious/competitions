@@ -56,6 +56,7 @@ public class ScheduleService {
             runs = createScheduleForSession(sessionId);
         }
 
+        runs.sort((l,r)->l.getStartPosition()-r.getStartPosition());
         return enrichWithLifeSignInfo(runs);
 
     }
@@ -205,7 +206,31 @@ public class ScheduleService {
     }
 
     private List<FuriousRun> createScheduleForCompetition(Competition comp, RacingSession session) {
-        return new ArrayList<>();
+
+        RacingSession qualiSession = findSession( session.getCompetition(), RacingSession.SessionType.Qualifying);
+
+        List<RoundResult> qualiResults = specialRepo.findBestRoundTimes(session.getCompetition(), qualiSession.getId());
+
+        if ( qualiResults.size() == 0 ) {
+            return new ArrayList<>();
+        }
+
+        List<FuriousRun> schedule = new ArrayList<>();
+
+        LocalDateTime startTime = session.getPlannedStartTime();
+
+        int position = qualiResults.size();
+
+        for (RoundResult result : qualiResults ) {
+            FuriousRun run = new FuriousRun(result.getTeam(), startTime, null, session.getId(),
+                    comp.getId(), FuriousRun.Status.SCHEDULED, position--);
+
+            runRepo.save(run);
+            schedule.add(run);
+        }
+
+        schedule.sort((r,l)->r.getStartPosition()-l.getStartPosition());
+        return schedule;
     }
 
 
@@ -288,7 +313,7 @@ public class ScheduleService {
                 comp.getName(), tags, session.getType().toString(), description);
 
         return new RunRequest(run.getTeam(), registration.getAccessCode(), protocol, encoding, session.getTrackId(),
-                metadata, id);
+                metadata, id, session.getRunDuration());
     }
 
     private String createDescription(FuriousRun run, RacingSession session, Competition comp) {
@@ -306,4 +331,18 @@ public class ScheduleService {
         return buffer.toString();
     }
 
+    @Transactional
+    public void stopRunOnTrack(String trackId) {
+
+        List<FuriousRun> runs = runRepo.findByStatus ( FuriousRun.Status.ONGOING );
+
+        for ( FuriousRun run : runs ) {
+            RacingSession session = sessionRepo.findOne(run.getSessionId());
+            if ( session != null && session.getTrackId().equals(trackId)) {
+
+                run.setStatus(FuriousRun.Status.QUALIFIED);
+                publisher.publish(session.getCompetition(), run.getSessionId(), null);
+            }
+        }
+    }
 }

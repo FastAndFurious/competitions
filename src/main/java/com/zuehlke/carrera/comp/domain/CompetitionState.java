@@ -8,6 +8,7 @@ import java.util.List;
 public class CompetitionState {
 
     private String name;
+    private String currentSession;
     private final long snapshotTime = System.currentTimeMillis();
     private List<RoundResult> currentBoard;
     private RecentRunInfo recentRunInfo;
@@ -64,5 +65,13 @@ public class CompetitionState {
 
     public void setRecentRunInfo(RecentRunInfo recentRunInfo) {
         this.recentRunInfo = recentRunInfo;
+    }
+
+    public String getCurrentSession() {
+        return currentSession;
+    }
+
+    public void setCurrentSession(String currentSession) {
+        this.currentSession = currentSession;
     }
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div>
-    <h1 class="title">{{status.name}}</h1>
+    <h1 class="title">{{status.name}} - {{status.currentSession}}</h1>
 
     <div class="mainScoreBoard" ng-show="showMain()">
         <div class="table-responsive">
@@ -26,7 +26,16 @@
 
     <div class="ongoingRun" ng-show="showOngoing()">
 
-        <div class="h4">{{status.recentRunInfo.team}}: most recent rounds</div>
+        <div>
+            <h3>Round Elapsed: {{currentRoundElapsed | number: 3}}</h3>
+            <h3>Run Elapsed: {{currentRunElapsed | number: 3}}</h3>
+        </div>
+
+        <div>
+            <h3>Current Position: {{status.recentRunInfo.bestOfThisTeam.position}} with {{status.recentRunInfo.bestOfThisTeam.duration / 1000.0 | number: 3}}</h3>
+        </div>
+
+        <div class="h3">{{status.recentRunInfo.team}}</div>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>

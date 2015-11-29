@@ -16,5 +16,15 @@ angular.module('competitionApp')
                         controller: 'RunController'
                     }
                 },
+
+                onEnter: function(Status) {
+                    Status.connect();
+                    Status.subscribe();
+                },
+                onExit: function(Status) {
+                    Status.unsubscribe();
+                    Status.disconnect();
+                }
+
             })
     });

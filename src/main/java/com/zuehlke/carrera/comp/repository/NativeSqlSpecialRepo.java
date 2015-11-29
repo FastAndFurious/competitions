@@ -120,7 +120,7 @@ public class NativeSqlSpecialRepo implements SpecialRepo {
             long duration = ((BigInteger) row[0]).longValue();
             String team = (String) row[1];
             String compName = (String) row[4];
-            RoundResult roundResult = new RoundResult(team, sessionId, compName, rownum++, duration );
+            RoundResult roundResult = new RoundResult(team, sessionId, compName, ++rownum, duration );
             roundTimes.add(roundResult);
         }
 

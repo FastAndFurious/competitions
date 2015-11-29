@@ -50,10 +50,13 @@ public class RacingSession implements Serializable {
     @Column(name = "track_id", nullable = false)
     private String trackId;
 
+    @Column(name="run_duration", nullable = true)
+    private Integer runDuration;
+
     public RacingSession(){} // for JPA
 
     public RacingSession(Long id, String competition, SessionType type, Integer seqNo, LocalDateTime plannedStartTime,
-                         String trackId, String trackLayout) {
+                         String trackId, String trackLayout, int runDuration ) {
         this.id = id;
         this.competition = competition;
         this.type = type;
@@ -61,6 +64,7 @@ public class RacingSession implements Serializable {
         this.plannedStartTime = plannedStartTime;
         this.trackId = trackId;
         this.trackLayout = trackLayout;
+        this.runDuration = runDuration;
     }
 
     public Long getId() {
@@ -117,6 +121,14 @@ public class RacingSession implements Serializable {
 
     public void setTrackId(String trackId) {
         this.trackId = trackId;
+    }
+
+    public Integer getRunDuration() {
+        return runDuration;
+    }
+
+    public void setRunDuration(Integer runDuration) {
+        this.runDuration = runDuration;
     }
 
     @Override

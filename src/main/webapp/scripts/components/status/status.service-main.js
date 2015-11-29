@@ -40,6 +40,5 @@ var statusSubscriber = function ($rootScope, $cookies, $http, $q) {
     };
 };
 
-angular.module('scoreBoardApp')
+angular.module('competitionApp')
     .factory('Status', statusSubscriber );
-

@@ -15,4 +15,6 @@ public interface FuriousRunRepository extends JpaRepository<FuriousRun,Long> {
     List<FuriousRun> findBySessionId(Long sessionId);
 
     FuriousRun findOneBySessionIdAndTeam(Long sessionId, String team);
+
+    List<FuriousRun> findByStatus(FuriousRun.Status ongoing);
 }

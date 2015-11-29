@@ -43,19 +43,40 @@ angular.module('scoreBoardApp', ['LocalStorageModule', 'tmh.dynamicLocale',
 
     })
 
-    .controller('ScoreBoardController', function ( $scope, Status) {
+    .controller('ScoreBoardController', function ( $scope, Status, $interval) {
+
+        $scope.currentRoundElapsed = 0;
+        $scope.currentRoundStart = Date.now();
+        $scope.currentRunElapsed = 0;
+        $scope.currentRunStart = Date.now();
 
         $scope.display = "MAIN";
 
         $scope.title = "Competition not yet started";
 
+        var stopRun;
+
         Status.receive().then(null, null, function(status) {
             $scope.status = status;
 
             if ( status.recentRunInfo == null ) {
-                $scope.display = "MAIN";
+                if ( $scope.display !== "MAIN" ) {
+                    $scope.display = "MAIN";
+                    if ( angular.isDefined(stopRun)) {
+                        $interval.cancel(stopRun);
+                        stopRun = undefined;
+                    }
+                }
             } else {
-                $scope.display = "ONGOING";
+                $scope.currentRoundStart = Date.now();
+                if ( $scope.display !== "ONGOING" ) {
+                    $scope.currentRunStart = Date.now();
+                    stopRun = $interval(function(){
+                        $scope.currentRoundElapsed = ( Date.now() - $scope.currentRoundStart ) / 1000.0;
+                        $scope.currentRunElapsed = ( Date.now() - $scope.currentRunStart ) / 1000.0;
+                    }, 10);
+                    $scope.display = "ONGOING";
+                }
             }
         });
 

@@ -29,6 +29,9 @@ public class StompCompetitionStatePublisher implements CompetitionStatePublisher
     public void publish(String competition, Long sessionId, String team ) {
 
         CompetitionState state = assembler.assembleStateInfo(competition, sessionId, team);
+        if ( state.getRecentRunInfo() == null ) {
+            System.out.println("Gotcha!");
+        }
         messagingTemplate.convertAndSend("/topic/status", state);
     }
 
