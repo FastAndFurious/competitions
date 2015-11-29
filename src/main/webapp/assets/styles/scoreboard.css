@@ -1,7 +1,7 @@
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\000031}}
 h1.title {
   color: #952351;
-  font-size: 30pt;
+  font-size: 40pt;
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\000036}}
@@ -12,4 +12,21 @@ table thead {
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/wgiersche\/workspaces\/competitions\/src\/main\/scss\/scoreboard\.scss}line{font-family:\0000310}}
 table tbody {
   font-size: 20pt;
+}
+
+
+.centered {
+  text-align: center;
+}
+
+.clock {
+  background-color: #A0C0FF;
+  font-size: 30pt;
+  color: #952351;
+}
+
+.big {
+  font-size: 50pt;
+  font-weight:bold;
+  color: #0000FF;
 }

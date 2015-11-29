@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <div>
-    <h1 class="title">{{status.name}} - {{status.currentSession}}</h1>
-
+    <div class="centered">
+        <h1 class="title">{{status.name}} - {{status.currentSession}}</h1>
+    </div>
+    <hr>
     <div class="mainScoreBoard" ng-show="showMain()">
         <div class="table-responsive">
             <table class="table table-striped">
@@ -26,21 +28,35 @@
 
     <div class="ongoingRun" ng-show="showOngoing()">
 
-        <div>
-            <h3>Round Elapsed: {{currentRoundElapsed | number: 3}}</h3>
-            <h3>Run Elapsed: {{currentRunElapsed | number: 3}}</h3>
+        <div class="row">
+            <div class="col-lg-3 centered clock">
+                <h1>Round: {{currentRoundElapsed | number: 3}}</h1>
+            </div>
+            <div class="col-lg-6 centered">
+                <h1 class="title">Team {{status.recentRunInfo.team}}</h1>
+            </div>
+            <div class="col-lg-3 centered clock">
+                <h1>Run: {{currentRunElapsed | number: 3}}</h1>
+            </div>
         </div>
 
-        <div>
-            <h3>Current Position: {{status.recentRunInfo.bestOfThisTeam.position}} with {{status.recentRunInfo.bestOfThisTeam.duration / 1000.0 | number: 3}}</h3>
+        <div class="row">
+            <div class="col-lg-6 centered">
+                <h1 class="big">Rank: {{status.recentRunInfo.bestOfThisTeam.position}}</h1>
+            </div>
+            <div class="col-lg-6 centered">
+                <h1 class="big">Best: {{status.recentRunInfo.bestOfThisTeam.duration / 1000.0 | number: 3}}</h1>
+            </div>
         </div>
 
-        <div class="h3">{{status.recentRunInfo.team}}</div>
+        <hr>
+
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>RoundTime</th>
+                    <th>Recent Round Times</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,5 +67,4 @@
             </table>
         </div>
     </div>
-
-    </html>
+</div>

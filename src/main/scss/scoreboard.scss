@@ -1,6 +1,6 @@
 h1.title {
   color: #952351;
-  font-size: 30pt;
+  font-size: 40pt;
 }
 
 table thead {
@@ -9,4 +9,20 @@ table thead {
 
 table tbody {
   font-size: 20pt;
+}
+
+.centered {
+  text-align: center;
+}
+
+.clock {
+  background-color: #A0C0FF;
+  font-size: 30pt;
+  color: #952351;
+}
+
+.big {
+  font-size: 50pt;
+  font-weight:bold;
+  color: #0000FF;
 }
