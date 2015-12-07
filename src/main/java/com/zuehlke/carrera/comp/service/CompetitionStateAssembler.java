@@ -1,9 +1,6 @@
 package com.zuehlke.carrera.comp.service;
 
-import com.zuehlke.carrera.comp.domain.CompetitionState;
-import com.zuehlke.carrera.comp.domain.FuriousRun;
-import com.zuehlke.carrera.comp.domain.RacingSession;
-import com.zuehlke.carrera.comp.domain.RecentRunInfo;
+import com.zuehlke.carrera.comp.domain.*;
 import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
@@ -12,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * publishes the recent state of the competition to WS/STOMP subscribers
@@ -36,19 +34,42 @@ public class CompetitionStateAssembler {
 
         CompetitionState state = new CompetitionState(competition);
 
-        state.setCurrentBoard ( specialRepo.findBestRoundTimes( competition, sessionId ));
+        List< RoundResult> currentBoard = specialRepo.findBestRoundTimes( competition, sessionId );
+
+        state.setCurrentBoard ( currentBoard );
+
+        if ( currentBoard.size() > 0 ) {
+            state.setBestOfSession(currentBoard.get(0));
+        }
 
         state.setCurrentSession( sessionName );
+
+
 
         if ( team != null ) {
             RecentRunInfo recentRunInfo = createRunInfoIfOngoing(competition, sessionId, team);
             state.setRecentRunInfo(recentRunInfo);
 
             if (recentRunInfo != null) {
+                List<RoundResult> allResults = specialRepo.findBestRoundTimes(competition, sessionId);
+
                 recentRunInfo.setTeam(team);
-                specialRepo.findBestRoundTimes(competition, sessionId).stream().filter((rt) -> rt.getTeam().equals(team)).forEach(
+
+                allResults.stream().filter((rt) -> rt.getTeam().equals(team)).forEach(
                         recentRunInfo::setBestOfThisTeam
                 );
+
+                RoundResult bestOfThisTeam = recentRunInfo.getBestOfThisTeam();
+                if ( bestOfThisTeam != null ) {
+                    int currentTeamsPosition = bestOfThisTeam.getPosition();
+
+                    if (currentTeamsPosition != 1) {
+                        RoundResult nextBest = allResults.stream().filter(
+                                r -> r.getPosition() == currentTeamsPosition - 1)
+                                .findAny().get();
+                        recentRunInfo.setNextBest ( nextBest );
+                    }
+                }
             }
         }
         return state;

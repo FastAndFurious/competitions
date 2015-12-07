@@ -147,11 +147,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.zuehlke.fastandfurious</groupId>
             <artifactId>fnf.clientapi</artifactId>
-            <version>1.1.7-SNAPSHOT</version>
+            <version>1.1.7</version>
             <exclusions>
                 <exclusion>
                     <artifactId>akka-actor_2.10</artifactId>
@@ -163,6 +162,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <!-- The HikariCP Java Agent is disabled by default, as it is experimental
         <dependency>
             <groupId>com.zaxxer</groupId>

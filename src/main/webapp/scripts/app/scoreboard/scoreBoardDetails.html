@@ -33,7 +33,7 @@
                 <h1>Round: {{currentRoundElapsed | number: 3}}</h1>
             </div>
             <div class="col-lg-6 centered">
-                <h1 class="title">Team {{status.recentRunInfo.team}}</h1>
+                <h1 class="big">{{status.recentRunInfo.team}}</h1>
             </div>
             <div class="col-lg-3 centered clock">
                 <h1>Run: {{currentRunElapsed | number: 3}}</h1>
@@ -66,5 +66,25 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="row" ng-show="status.recentRunInfo.nextBest">
+            <div class="col-lg-6 centered">
+                <h1 class="notsobig">Next best: {{status.recentRunInfo.nextBest.team}}</h1>
+            </div>
+            <div class="col-lg-6 centered">
+                <h1 class="notsobig">with: {{status.recentRunInfo.nextBest.duration / 1000.0 | number: 3 }}</h1>
+            </div>
+        </div>
+
+        <div class="row" ng-show="status.bestOfSession">
+            <div class="col-lg-6 centered">
+                <h1 class="notsobig">Very best: {{status.bestOfSession.team}}</h1>
+            </div>
+            <div class="col-lg-6 centered">
+                <h1 class="notsobig">with: {{status.bestOfSession.duration / 1000.0 | number: 3 }}</h1>
+            </div>
+        </div>
+
+
     </div>
 </div>

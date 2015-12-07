@@ -10,6 +10,7 @@ public class RecentRunInfo {
     private String team;
     private List<RoundResult> currentRunResults;
     private RoundResult bestOfThisTeam;
+    private RoundResult nextBest;
 
 
     public List<RoundResult> getCurrentRunResults() {
@@ -34,5 +35,13 @@ public class RecentRunInfo {
 
     public void setBestOfThisTeam(RoundResult bestOfThisTeam) {
         this.bestOfThisTeam = bestOfThisTeam;
+    }
+
+    public void setNextBest(RoundResult nextBest) {
+        this.nextBest = nextBest;
+    }
+
+    public RoundResult getNextBest() {
+        return nextBest;
     }
 }

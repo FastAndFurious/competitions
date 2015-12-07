@@ -15,6 +15,7 @@ public class CompetitionState {
 
     private long scheduledStartTime;
     private Phase phase = Phase.SCHEDULED;
+    private RoundResult bestOfSession;
 
     public CompetitionState() {
     }
@@ -73,5 +74,13 @@ public class CompetitionState {
 
     public void setCurrentSession(String currentSession) {
         this.currentSession = currentSession;
+    }
+
+    public void setBestOfSession(RoundResult bestOfSession) {
+        this.bestOfSession = bestOfSession;
+    }
+
+    public RoundResult getBestOfSession() {
+        return bestOfSession;
     }
 }
