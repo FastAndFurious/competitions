@@ -2,8 +2,6 @@ package com.zuehlke.carrera.comp.domain.util;
 
 import java.io.IOException;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,7 +16,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 public class CustomDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
     private static DateTimeFormatter formatter = DateTimeFormat
-            .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            .forPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Override
     public void serialize(LocalDateTime value, JsonGenerator generator,

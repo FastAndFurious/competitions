@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zuehlke.carrera.comp.domain.util.CustomDateTimeDeserializer;
 import com.zuehlke.carrera.comp.domain.util.CustomDateTimeSerializer;
-import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -51,11 +50,11 @@ public class FuriousRun implements Serializable {
     protected Integer startPosition;
 
     @Enumerated(EnumType.STRING)
-    protected Status status;
+    protected RunStatus status;
 
     public FuriousRun () {} // for JPA
 
-    public FuriousRun(String team, LocalDateTime scheduledStartDate, LocalDateTime startDate, Long sessionId, Long competitionId, Status status, int position ) {
+    public FuriousRun(String team, LocalDateTime scheduledStartDate, LocalDateTime startDate, Long sessionId, Long competitionId, RunStatus status, int position ) {
         this.team = team;
         this.scheduledStartDate = scheduledStartDate;
         this.startDate = startDate;
@@ -114,11 +113,11 @@ public class FuriousRun implements Serializable {
         this.competitionId = competitionId;
     }
 
-    public Status getStatus() {
+    public RunStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(RunStatus status) {
         this.status = status;
     }
 
@@ -158,17 +157,6 @@ public class FuriousRun implements Serializable {
                 ", team='" + team + "'" +
                 ", startDate='" + startDate + "'" +
                 '}';
-    }
-
-    /**
-     *  the current status of a particular
-     */
-    public static enum Status {
-        SCHEDULED,
-        ONGOING,
-        SUSPENDED,
-        QUALIFIED,
-        DISQUALIFIED
     }
 
 }

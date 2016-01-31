@@ -22,16 +22,6 @@ public class RestfulPilotInfoResource implements PilotInfoResource {
 
     @Override
     public PilotInfo retrieveInfo() {
-        PilotInfo response = new PilotInfo();
-        try {
-            response =
-                    new RestTemplate().getForObject(pilotUrlInfo, PilotInfo.class);
-        } catch ( ResourceAccessException rae ) {
-            rae.printStackTrace();
-            LOGGER.warn("Couldn't retrieve pilot info from relay at " + pilotUrlInfo);
-            LOGGER.warn("Returning an empty pilot info object, instead.");
-        }
-
-        return response;
+        return new RestTemplate().getForObject(pilotUrlInfo, PilotInfo.class);
     }
 }

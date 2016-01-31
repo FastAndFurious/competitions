@@ -2,6 +2,7 @@ package com.zuehlke.carrera.comp.repository;
 
 import com.zuehlke.carrera.comp.CompetitionManagerApp;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
+import com.zuehlke.carrera.comp.domain.RunStatus;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class FuriousRunRepositoryTest {
     @Test
     public void testSaveAndRetrieve() {
 
-        FuriousRun run = new FuriousRun("koba", new LocalDateTime(), new LocalDateTime(), 1L, 1L, FuriousRun.Status.SCHEDULED, 1);
+        FuriousRun run = new FuriousRun("koba", new LocalDateTime(), new LocalDateTime(), 1L, 1L, RunStatus.SCHEDULED, 1);
 
         repo.save ( run );
 

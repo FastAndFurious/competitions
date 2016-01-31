@@ -1,0 +1,103 @@
+<div>
+
+    <h2>Training Schedule: {{competition.name}}, {{session.type}} No. {{session.seqNo}}</h2>
+
+    <div class="modal fade" id="errorMessageModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="deleteForm" ng-submit="confirmDelete(racingSession.id)">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" >There was a problem on the server</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p >{{currentErrorMessage}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-ok"></span>&nbsp;<span >OK</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Guaranteed</th>
+                    <th>Team</th>
+                    <th>Applied</th>
+                    <th>Schedule</th>
+                    <th>Performed</th>
+                    <th>Missed</th>
+                    <th>Life Signs</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="run in runs">
+                    <td>{{run.position}}</td>
+                    <td>{{run.guaranteedPosition}}</td>
+                    <td>{{run.teamId}}</td>
+                    <td>{{run.application.applicationTime | date : 'EEE HH:mm:ss' }}</td>
+                    <td>{{run.scheduledStart | date : 'HH:mm' }}</td>
+                    <td>{{run.numberOfPerformedRuns}}</td>
+                    <td>{{run.numberOfMissedRuns}}</td>
+                    <td>{{run.pilotState}}</td>
+                    <td>
+                        <button type="submit" ng-click="startRun(run)"
+                                ng-hide="run.status==='ONGOING'"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-flag"></span>&nbsp;<span>Start</span>
+                        </button>
+                        <button type="submit" ng-click="stopRun(run)"
+                                ng-show="run.status==='ONGOING'"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-remove"></span>&nbsp;<span>Stop</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="submit" ng-click="applyForTraining(run)"
+                                class="btn btn-primary btn-sm">
+                            <span class="glyphicon glyphicon-edit"></span>&nbsp;<span>Apply</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="submit" ng-click="missedTraining(run)"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-hourglass"></span>&nbsp;<span>Missed</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div ng-if="erroneousLifeSigns.length > 0">
+        <h2>Erroneous Life Signs</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>error code</th>
+                    <th>age in seconds</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="els in erroneousLifeSigns">
+                    <td>{{els.teamId}}</td>
+                    <td>{{els.reason}}</td>
+                    <td>{{els.ageInSeconds}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

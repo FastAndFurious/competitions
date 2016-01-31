@@ -35,7 +35,7 @@ public class FuriousRunDto extends FuriousRun {
         this.sessionId = run.sessionId;
         this.competitionId = run.competitionId;
         this.status = run.status;
-        pilotState = PilotState.NO_LIFESIGNS;
+        this.pilotState = PilotState.NO_LIFESIGNS;
     }
 
     public PilotLifeSign getPilotLifeSign() {
@@ -87,6 +87,7 @@ public class FuriousRunDto extends FuriousRun {
     public static enum PilotState {
         CURRENT_LIFESIGNS,
         FORMER_LIFESIGNS,
-        NO_LIFESIGNS;
+        NO_LIFESIGNS,
+        UNKNOWN
     }
 }

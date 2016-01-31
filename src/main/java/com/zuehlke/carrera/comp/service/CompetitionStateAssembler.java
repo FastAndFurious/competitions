@@ -1,11 +1,9 @@
 package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
-import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
 import com.zuehlke.carrera.comp.repository.SpecialRepo;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -79,7 +77,7 @@ public class CompetitionStateAssembler {
         FuriousRun run = runRepository.findOneBySessionIdAndTeam(sessionId, team);
 
         if ( run != null ) {
-            if ( run.getStatus() == FuriousRun.Status.ONGOING) {
+            if ( run.getStatus() == RunStatus.ONGOING) {
                 RecentRunInfo recentRunInfo = new RecentRunInfo();
                 recentRunInfo.setCurrentRunResults(specialRepo.findLatestRoundTimes(competition, sessionId, team, 5));
                 return recentRunInfo;

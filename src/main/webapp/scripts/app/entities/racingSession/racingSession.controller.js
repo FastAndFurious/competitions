@@ -3,7 +3,9 @@
 angular.module('competitionApp')
     .controller('RacingSessionController', function ($scope, RacingSession, Competition, $stateParams) {
         $scope.racingSessions = [];
-        $scope.sessionTypes = ['Preparation', 'Training', 'Qualification', 'Competition'];
+
+        $scope.defaultSelectedType = 'Training';
+        $scope.sessionTypes = [$scope.defaultSelectedType, 'Qualifying', 'Competition'];
 
         $scope.loadAll = function(competitionId) {
             Competition.get({id: competitionId}, function (competition) {
@@ -50,9 +52,11 @@ angular.module('competitionApp')
 
         $scope.clear = function () {
             $scope.racingSession = {competition: $scope.competition.name,
-                type: 'Training', seqNo: 1,
+                type: $scope.defaultSelectedType,
+                seqNo: 1,
                 plannedStartTime: $scope.competition.startDate,
-                trackLayout: null, id: null};
+                trackLayout: null,
+                id: null};
 
             $scope.editForm.$setPristine();
             $scope.editForm.$setUntouched();

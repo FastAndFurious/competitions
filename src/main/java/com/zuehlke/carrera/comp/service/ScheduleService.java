@@ -28,6 +28,8 @@ public class ScheduleService {
     @Autowired
     private FuriousRunRepository runRepo;
     @Autowired
+    private TrainingApplicationRepository applicationRepository;
+    @Autowired
     private TeamRegistrationRepository teamRepo;
     @Autowired
     private CompetitionRepository compRepo;
@@ -57,7 +59,9 @@ public class ScheduleService {
         }
 
         runs.sort((l,r)->l.getStartPosition()-r.getStartPosition());
-        return enrichWithLifeSignInfo(runs);
+
+        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
+        return enrichWithLifeSignInfo(runs, pilotInfo);
 
     }
 
@@ -83,9 +87,9 @@ public class ScheduleService {
      * @param runs the original list of runs
      * @return a list of dtos with additional status info
      */
-    private List<FuriousRunDto> enrichWithLifeSignInfo(List<FuriousRun> runs) {
+    public static List<FuriousRunDto> enrichWithLifeSignInfo(
 
-        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
+        List<FuriousRun> runs, PilotInfo pilotInfo) {
 
         List<FuriousRunDto> dtos = new ArrayList<>();
 
@@ -127,7 +131,7 @@ public class ScheduleService {
      * @param timestamp the timestamp of the most recent life sign
      * @return the status as an interpretation of the timestamp as a valid life sign.
      */
-    private FuriousRunDto.PilotState determineState(long timestamp) {
+    public static FuriousRunDto.PilotState determineState(long timestamp) {
 
         long ten_seconds = 10000;
         long five_minutes = 300000;
@@ -186,7 +190,7 @@ public class ScheduleService {
 
         for (RoundResult result : trainingResults ) {
             FuriousRun run = new FuriousRun(result.getTeam(), startTime, null, session.getId(),
-                    comp.getId(), FuriousRun.Status.SCHEDULED, position--);
+                    comp.getId(), RunStatus.SCHEDULED, position--);
 
             runRepo.save(run);
             schedule.add(run);
@@ -223,7 +227,7 @@ public class ScheduleService {
 
         for (RoundResult result : qualiResults ) {
             FuriousRun run = new FuriousRun(result.getTeam(), startTime, null, session.getId(),
-                    comp.getId(), FuriousRun.Status.SCHEDULED, position--);
+                    comp.getId(), RunStatus.SCHEDULED, position--);
 
             runRepo.save(run);
             schedule.add(run);
@@ -254,7 +258,7 @@ public class ScheduleService {
 
         for (TeamRegistration registration : registrations) {
             FuriousRun run = new FuriousRun(registration.getTeam(), startTime, null, session.getId(),
-                    competition.getId(), FuriousRun.Status.SCHEDULED, startPosition ++);
+                    competition.getId(), RunStatus.SCHEDULED, startPosition ++);
 
             runRepo.save(run);
             schedule.add(run);
@@ -267,13 +271,16 @@ public class ScheduleService {
     @Transactional
     public ServiceResult startRun(Long id) {
 
+
         FuriousRun run = runRepo.findOne(id);
         RunRequest request = getRunRequest(id, run);
         Competition comp = compRepo.findOne(run.getCompetitionId());
 
+        performAndExpireApplication(run.getTeam(), run.getSessionId());
+
         ServiceResult result = relayApi.startRun(request, LOGGER);
         if (result.getStatus() == ServiceResult.Status.OK) {
-            run.setStatus(FuriousRun.Status.ONGOING);
+            run.setStatus(RunStatus.ONGOING);
             runRepo.save(run);
             publisher.publish(comp.getName(), run.getSessionId(), run.getTeam());
         }
@@ -281,11 +288,22 @@ public class ScheduleService {
         return result;
     }
 
+    /**
+     * If there's a training application associated with this run, expire it and count
+     */
+    private void performAndExpireApplication(String team, Long sessionId) {
+
+        TrainingApplication application = applicationRepository.findOneByTeamNameAndSessionId(team, sessionId);
+        if ( application != null ) {
+            application.incrementPerformedRunsAndExpire();
+        }
+    }
+
 
     public ServiceResult stopRun(Long id) {
 
         FuriousRun run = runRepo.findOne(id);
-        run.setStatus(FuriousRun.Status.QUALIFIED);
+        run.setStatus(RunStatus.QUALIFIED);
         runRepo.save(run);
 
         RacingSession session = sessionRepo.findOne(run.getSessionId());
@@ -334,13 +352,13 @@ public class ScheduleService {
     @Transactional
     public void stopRunOnTrack(String trackId) {
 
-        List<FuriousRun> runs = runRepo.findByStatus ( FuriousRun.Status.ONGOING );
+        List<FuriousRun> runs = runRepo.findByStatus ( RunStatus.ONGOING );
 
         for ( FuriousRun run : runs ) {
             RacingSession session = sessionRepo.findOne(run.getSessionId());
             if ( session != null && session.getTrackId().equals(trackId)) {
 
-                run.setStatus(FuriousRun.Status.QUALIFIED);
+                run.setStatus(RunStatus.QUALIFIED);
                 publisher.publish(session.getCompetition(), run.getSessionId(), null);
             }
         }

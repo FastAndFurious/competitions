@@ -9,11 +9,13 @@ import com.zuehlke.carrera.comp.service.MockPilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.*;
 import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
+import io.gatling.core.controller.Run;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.ExactComparisonCriteria;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
@@ -62,14 +64,16 @@ public class RaceManagementIntegrationTest {
     private RoundTimeResource roundTimeResource;
 
     @Autowired
-    MockCompetitionStatePublisher publisher;
+    private MockCompetitionStatePublisher publisher;
 
     @Autowired
-    MockPilotInfoResource pilotInfoResource;
+    private MockPilotInfoResource pilotInfoResource;
 
     @Autowired
-    TeamRegistrationRepository teamRepo;
+    private TeamRegistrationRepository teamRepo;
 
+    @Autowired
+    private FreeTrainingResource freeTrainingResource;
 
     private int roundEventCounter;
 
@@ -129,6 +133,8 @@ public class RaceManagementIntegrationTest {
 
         create_quali_schedule ( true ); // expect empty result
 
+        simulate_free_training_schedule();
+
         simulate_training_runs();
 
         create_quali_schedule ( false );
@@ -156,6 +162,58 @@ public class RaceManagementIntegrationTest {
         Assert.assertTrue ( errors.stream().anyMatch(e -> e.getTeamId().equals("wolfies")));
     }
 
+    private void sleep ( int millies ) {
+        try {
+            Thread.sleep( millies );
+        } catch ( Exception e ) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void simulate_free_training_schedule() {
+
+        List<RacingSession> allSessions = sessionResource.getAll();
+        allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)-> {
+
+            /**
+             * the first three teams apply and will start in the order of application
+             */
+            try {
+                freeTrainingResource.applyForTraining(new ApplicationNotification("harries", s.getId()));
+                sleep(1000);
+                freeTrainingResource.applyForTraining(new ApplicationNotification("wolfies", s.getId()));
+                sleep(1000);
+                freeTrainingResource.applyForTraining(new ApplicationNotification("steffies", s.getId()));
+                sleep(1000);
+            } catch (URISyntaxException e) {
+                Assert.fail("Caught Exception. Wasn't expecting that.");
+            }
+            List<ScheduledRun> runs = freeTrainingResource.getSchedule(s.getId());
+            assertOrder ( runs, "harries", "wolfies", "steffies", "bernies");
+
+            /**
+             * the first team runs, the fourth team applies
+             */
+            try {
+                freeTrainingResource.applyForTraining(new ApplicationNotification("bernies", s.getId()));
+                freeTrainingResource.registerPerformedRun ( new RunPerformedNotification("harries", s.getId()));
+            } catch (URISyntaxException e) {
+                Assert.fail("Caught Exception. Wasn't expecting that.");
+            }
+            runs = freeTrainingResource.getSchedule(s.getId());
+            assertOrder ( runs, "wolfies", "steffies", "bernies", "harries");
+
+        });
+    }
+
+    private void assertOrder ( List<ScheduledRun> runs, String first, String second, String third, String fourth ) {
+
+        ScheduleUtils.println ( runs, runs.size() );
+        Assert.assertTrue (first + " should be first", first.equals(runs.get(0).getTeamId()));
+        Assert.assertTrue (second + " should be second", second.equals(runs.get(1).getTeamId()));
+        Assert.assertTrue (third + " should be third", third.equals(runs.get(2).getTeamId()));
+        Assert.assertTrue (fourth + " should be fourth", fourth.equals(runs.get(3).getTeamId()));
+    }
 
     private void simulate_training_runs() {
 
@@ -163,16 +221,17 @@ public class RaceManagementIntegrationTest {
 
         for ( String team : new String[]{"wolfies", "harries", "steffies", "bernies"}) {
 
-            simulate_training_start ( team );
+            simulate_training_run( team );
         }
 
         List<RoundTime> roundTimes = roundTimeResource.getAll();
         Assert.assertEquals ( 12, roundTimes.size() );
     }
 
-    private void simulate_training_start(String team) {
+    private void simulate_training_run(String team) {
         List<RacingSession> allSessions = sessionResource.getAll();
         allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)->{
+
             runResource.getSchedule( s.getId() ).stream().filter((r)->r.getTeam().equals(team)).forEach((r)->{
                 runResource.startRun(r.getId());
                 try {

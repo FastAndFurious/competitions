@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class RacingSessionResourceTest {
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private static final String DEFAULT_COMPETITION = "SAMPLE_TEXT";
     private static final String UPDATED_COMPETITION = "UPDATED_TEXT";

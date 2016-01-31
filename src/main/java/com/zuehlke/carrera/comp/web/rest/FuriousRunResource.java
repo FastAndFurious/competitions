@@ -3,6 +3,7 @@ package com.zuehlke.carrera.comp.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
 import com.zuehlke.carrera.comp.domain.FuriousRunDto;
+import com.zuehlke.carrera.comp.domain.RunStatus;
 import com.zuehlke.carrera.comp.domain.RacingSession;
 import com.zuehlke.carrera.comp.nolog.StompCompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
@@ -100,9 +101,9 @@ public class FuriousRunResource {
 
         RacingSession session = sessionRepository.findOne(sessionId);
         String comp = session.getCompetition();
-        List<FuriousRun> runs = repository.findByStatus(FuriousRun.Status.ONGOING);
+        List<FuriousRun> runs = repository.findByStatus(RunStatus.ONGOING);
         if ( runs.size() > 0 ) {
-            runs.stream().filter(run -> run.getSessionId() == sessionId).forEach(run -> {
+            runs.stream().filter(run -> run.getSessionId().equals(sessionId)).forEach(run -> {
                 publishForRunId(run.getId());
             });
         } else {

@@ -32,8 +32,8 @@
                         </div>
                         <div class="form-group">
                             <label>Session Type</label>
-                            <input type="text" class="form-control" name="type"
-                                   ng-model="racingSession.type">
+                            <select id="sessionType" class="btn-primary" ng-model="racingSession.type"
+                                    ng-options="option for option in sessionTypes"></select>
 
                         </div>
                         <div class="form-group">
@@ -123,11 +123,11 @@
             <thead>
                 <tr>
                     <th>Type</th>
-                    <th>Sequence Number</th>
+                    <th>Seq. No</th>
                     <th>Run Duration</th>
-                    <th>PlannedStartTime</th>
+                    <th>Planned Start</th>
                     <th>Track Name</th>
-                    <th>Track Layout</th>
+                    <th>Layout</th>
                     <th></th>
                 </tr>
             </thead>
@@ -136,15 +136,23 @@
                     <td>{{racingSession.type}}</td>
                     <td>{{racingSession.seqNo}}</td>
                     <td>{{racingSession.runDuration}}</td>
-                    <td>{{racingSession.plannedStartTime}}</td>
+                    <td>{{racingSession.plannedStartTime | date : 'EEE HH:mm'}}</td>
                     <td>{{racingSession.trackId}}</td>
                     <td>{{racingSession.trackLayout}}</td>
                     <td>
-                        <button type="submit"
+
+                        <button type="submit" ng-if="racingSession.type==='Training'"
+                                ui-sref="trainingschedule({sessionId:racingSession.id})"
+                                class="btn btn-info">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>Schedule</span>
+                        </button>
+
+                        <button type="submit" ng-if="racingSession.type!=='Training'"
                                 ui-sref="runschedule({sessionId:racingSession.id})"
                                 class="btn btn-info">
                             <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>Schedule</span>
                         </button>
+
                         <button type="submit"
                                 ng-click="update(racingSession.id)"
                                 class="btn btn-primary">
@@ -155,7 +163,13 @@
                                 class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" ng-if="racingSession.type==='Training'"
+                                ng-click="newSchedule(racingSession.id)"
+                                ui-sref="trainingschedule({sessionId:racingSession.id})"
+                                class="btn btn-info">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span>New Schedule</span>
+                        </button>
+                        <button type="submit" ng-if="racingSession.type!=='Training'"
                                 ng-click="newSchedule(racingSession.id)"
                                 ui-sref="runschedule({sessionId:racingSession.id})"
                                 class="btn btn-info">

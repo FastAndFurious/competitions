@@ -1,8 +1,7 @@
 package com.zuehlke.carrera.comp.repository;
 
-import com.zuehlke.carrera.comp.domain.Competition;
 import com.zuehlke.carrera.comp.domain.FuriousRun;
-import org.springframework.context.annotation.Primary;
+import com.zuehlke.carrera.comp.domain.RunStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -16,5 +15,5 @@ public interface FuriousRunRepository extends JpaRepository<FuriousRun,Long> {
 
     FuriousRun findOneBySessionIdAndTeam(Long sessionId, String team);
 
-    List<FuriousRun> findByStatus(FuriousRun.Status ongoing);
+    List<FuriousRun> findByStatus(RunStatus ongoing);
 }

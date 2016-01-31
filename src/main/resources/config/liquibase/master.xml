@@ -14,5 +14,7 @@
     <include file="classpath:config/liquibase/changelog/20150919180000_added_columns_to_team_registration.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20151122130000_added_column_startPosition.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20151128153000_added_column_runDuration.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20160126203000_added_entity_TrainingApplication.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20160131130000_added_column_guaranteed_position.xml" relativeToChangelogFile="false"/>
     <!-- JHipster will add liquibase changelogs here -->
 </databaseChangeLog>
