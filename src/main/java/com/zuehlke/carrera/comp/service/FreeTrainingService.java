@@ -77,10 +77,10 @@ public class FreeTrainingService {
                     FuriousRun furiousRun = furiousRunRepository.findOneBySessionIdAndTeam(run.getSessionId(), run.getTeamId());
                     if (furiousRun != null) {
                         run.setFuriousId(furiousRun.getId());
+                        run.setStatus ( furiousRun.getStatus());
                     }
                     TrainingApplication application = assureApplication(run.getTeamId(), sessionId);
                     run.setApplication(application);
-                    run.setStatus ( furiousRun.getStatus());
                 }
         );
 
