@@ -43,6 +43,9 @@ public class FreeTrainingService {
     @Autowired
     private ScheduleService scheduleService;
 
+    @Autowired
+    private SocialBroadcaster socialBroadcaster;
+
     /**
      * Create a list of scheduled run <p/>
      * A complete schedule has a single entry for each team that's registered for the training session.
@@ -169,6 +172,8 @@ public class FreeTrainingService {
 
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
         application.refreshIfExpired();
+
+        socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 
     /**
@@ -181,8 +186,9 @@ public class FreeTrainingService {
     public void registerMissedRun(RunMissedNotification notification) {
 
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
+        application.incrementMissedRunsAndExpire();
 
-        application.incremenMissedRunsAndExpire();
+        socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 
     /**
@@ -195,8 +201,9 @@ public class FreeTrainingService {
     public void registerPerformedRun(RunPerformedNotification notification) {
 
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
-
         application.incrementPerformedRunsAndExpire();
+
+        socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.comp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zuehlke.carrera.comp.domain.util.CustomDateTimeDeserializer;
@@ -12,6 +13,9 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,6 +47,9 @@ public class TeamRegistration implements Serializable {
 
     @Column(name="encoding")
     private String encoding;
+
+    @Column(name="twitter_names")
+    private String twitterNames;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @JsonSerialize(using = CustomDateTimeSerializer.class)
@@ -117,6 +124,22 @@ public class TeamRegistration implements Serializable {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public void setTwitterNames ( String twitterNames ) {
+        this.twitterNames = twitterNames;
+    }
+
+    public String getTwitterNames () {
+        return twitterNames;
+    }
+
+    @JsonIgnore
+    public List<String> getListOfTwitterNames() {
+        if ( twitterNames == null ) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(twitterNames.split(","));
     }
 
     @Override

@@ -45,6 +45,7 @@ public class TeamRegistrationResourceTest {
     private static final String UPDATED_COMPETITION = "UPDATED_TEXT";
     private static final String DEFAULT_TEAM = "SAMPLE_TEXT";
     private static final String UPDATED_TEAM = "UPDATED_TEXT";
+    private static final String A_TWITTER_NAME = "@wgiersche";
 
     private static final LocalDateTime DEFAULT_REGISTRATION_TIME = new LocalDateTime(0L);
     private static final LocalDateTime UPDATED_REGISTRATION_TIME = new LocalDateTime()
@@ -71,6 +72,7 @@ public class TeamRegistrationResourceTest {
         teamRegistration.setTeam(DEFAULT_TEAM);
         teamRegistration.setRegistrationTime(DEFAULT_REGISTRATION_TIME);
         teamRegistration.setAccessCode("SAMPLE_TEXT");
+        teamRegistration.setTwitterNames("@wgiersche,@hgiersche,@bgiersche");
     }
 
     @Test
@@ -90,6 +92,7 @@ public class TeamRegistrationResourceTest {
         TeamRegistration testTeamRegistration = teamRegistrations.get(teamRegistrations.size() - 1);
         assertThat(testTeamRegistration.getCompetition()).isEqualTo(DEFAULT_COMPETITION);
         assertThat(testTeamRegistration.getTeam()).isEqualTo(DEFAULT_TEAM);
+        assertThat(testTeamRegistration.getTwitterNames()).contains(A_TWITTER_NAME);
     }
 
     @Test
@@ -192,6 +195,7 @@ public class TeamRegistrationResourceTest {
         assertThat(testTeamRegistration.getCompetition()).isEqualTo(UPDATED_COMPETITION);
         assertThat(testTeamRegistration.getTeam()).isEqualTo(UPDATED_TEAM);
         assertThat(testTeamRegistration.getRegistrationTime()).isEqualTo(UPDATED_REGISTRATION_TIME);
+        assertThat(testTeamRegistration.getListOfTwitterNames()).contains(A_TWITTER_NAME);
     }
 
     @Test

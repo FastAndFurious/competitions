@@ -59,3 +59,9 @@ swagger:
 competitions:
     relayUrl: http://localhost:8085/ws/rest/raceTracks/start
     pilotInfoUrl: http://localhost:8090/ws/rest/pilots/info
+
+twitter:
+    consumerKey: iDg09aMHy9iLrrLc1AOtK9HLj
+    consumerSecret: 3nDL4MCOxANXrlZqdObsdXufn2ddJfu8cqWA2dTwYZvsjYDJNd
+    accessToken: 4858707334-OtSWJlP6RRCJbeZYUhGMg6xQLqn0eTlR4bPrVaH
+    accessTokenSecret: KKkbtfw6wP1NEU60RsmMuMuojKpWgPU5HN855uWBYPRmc

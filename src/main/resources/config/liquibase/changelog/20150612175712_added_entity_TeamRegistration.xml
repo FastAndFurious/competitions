@@ -24,6 +24,9 @@
             <column name="access_code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="twitter_names" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="registration_time" type="timestamp"/>
         </createTable>
         <dropDefaultValue tableName="T_TEAMREGISTRATION" columnName="registration_time" columnDataType="datetime"/>

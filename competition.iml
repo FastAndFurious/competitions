@@ -202,6 +202,11 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:1.2.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.3" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-twitter:1.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-crypto:4.0.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-config:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-web:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-core:1.1.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-security:1.2.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.1.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:4.0.0.RELEASE" level="project" />

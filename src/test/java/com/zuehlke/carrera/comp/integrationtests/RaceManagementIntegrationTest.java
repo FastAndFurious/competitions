@@ -317,15 +317,19 @@ public class RaceManagementIntegrationTest {
         String encoding = "jason";
 
         TeamRegistration wolfies  = new TeamRegistration(null, COMPETITION_NAME, "wolfies", "access", protocol, encoding, first);
+        wolfies.setTwitterNames("@wgiersche");
         registrationResource.create(wolfies);
 
         TeamRegistration harries  = new TeamRegistration(null, COMPETITION_NAME, "harries", "access", protocol, encoding, second);
+        harries.setTwitterNames("@wgiersche");
         registrationResource.create(harries);
 
         TeamRegistration steffies  = new TeamRegistration(null, COMPETITION_NAME, "steffies", "access", protocol, encoding, third);
+        steffies.setTwitterNames("@wgiersche");
         registrationResource.create(steffies);
 
         TeamRegistration bernies  = new TeamRegistration(null, COMPETITION_NAME, "bernies", "access", protocol, encoding, fourth);
+        bernies.setTwitterNames("@wgiersche");
         registrationResource.create(bernies);
 
         TeamRegistration reg = teamRepo.findByTeam("Wolfies");

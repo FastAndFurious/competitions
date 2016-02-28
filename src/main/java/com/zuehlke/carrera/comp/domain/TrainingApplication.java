@@ -113,7 +113,7 @@ public class TrainingApplication {
     /**
      * register a missed run and "invalidate" the application
      */
-    public void incremenMissedRunsAndExpire() {
+    public void incrementMissedRunsAndExpire() {
         numberOfMissedRuns ++;
         applicationTime = null;
     }
