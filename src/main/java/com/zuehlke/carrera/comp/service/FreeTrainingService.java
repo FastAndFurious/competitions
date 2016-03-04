@@ -152,7 +152,7 @@ public class FreeTrainingService {
                                 }
                         );
                     });
-        } catch (ResourceAccessException rae) {
+        } catch (Exception e) {
             logger.error("Cannot access pilot info. Lifesigns not available");
             runs.forEach((r) -> r.setPilotState(FuriousRunDto.PilotState.UNKNOWN));
         }
