@@ -3,6 +3,7 @@ package com.zuehlke.carrera.comp.service;
 import com.zuehlke.carrera.comp.domain.*;
 import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.*;
+import com.zuehlke.carrera.comp.web.outbound.OutboundServiceException;
 import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.ServiceResult;
 import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
@@ -23,7 +24,7 @@ import java.util.*;
 @Component
 public class ScheduleService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ScheduleService.class);
+    public static final Logger logger = LoggerFactory.getLogger(ScheduleService.class);
 
     @Autowired
     private FuriousRunRepository runRepo;
@@ -60,8 +61,12 @@ public class ScheduleService {
 
         runs.sort((l,r)->l.getStartPosition()-r.getStartPosition());
 
-        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
-        return enrichWithLifeSignInfo(runs, pilotInfo);
+        try {
+            PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
+            return enrichWithLifeSignInfo(runs, pilotInfo);
+        } catch ( OutboundServiceException ose ) {
+            return asDtos(runs);
+        }
 
     }
 
@@ -81,6 +86,15 @@ public class ScheduleService {
         schedule.stream().forEach((runRepo::delete));
     }
 
+
+    public static List<FuriousRunDto> asDtos ( List<FuriousRun> runs ) {
+        List<FuriousRunDto> dtos = new ArrayList<>();
+
+        runs.stream().forEach((FuriousRun run) -> dtos.add(new FuriousRunDto(run)));
+
+        return dtos;
+    }
+
     /**
      * enriches the FuriousRun entities with recent info about the pilot lifesigns
      *
@@ -88,12 +102,9 @@ public class ScheduleService {
      * @return a list of dtos with additional status info
      */
     public static List<FuriousRunDto> enrichWithLifeSignInfo(
-
         List<FuriousRun> runs, PilotInfo pilotInfo) {
 
-        List<FuriousRunDto> dtos = new ArrayList<>();
-
-        runs.stream().forEach((FuriousRun run) -> dtos.add(new FuriousRunDto(run)));
+        List<FuriousRunDto> dtos = asDtos(runs);
 
         dtos.forEach(
                 (run) -> pilotInfo.getPilotLifeSigns().stream().filter(
@@ -110,16 +121,21 @@ public class ScheduleService {
     public List<ErroneousLifeSign> findErroneousLifeSigns () {
 
         List<ErroneousLifeSign> erroneous = new ArrayList<>();
-        PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
 
-        for ( PilotLifeSign lifeSign: pilotInfo.getPilotLifeSigns() ) {
-            TeamRegistration registration = teamRepo.findByTeam( lifeSign.getTeamId() );
-            // This is a weird thing in mysql: String comparison is case insensitive by default!!!
-            if ( registration == null ||  !registration.getTeam().equals(lifeSign.getTeamId())) {
-                erroneous.add(new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.NOT_REGISTERED));
-            } else if ( !registration.getAccessCode().equals(lifeSign.getAccessCode())) {
-                erroneous.add ( new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.INVALID_ACCESS_CODE));
+        try {
+            PilotInfo pilotInfo = pilotInfoResource.retrieveInfo();
+
+            for (PilotLifeSign lifeSign : pilotInfo.getPilotLifeSigns()) {
+                TeamRegistration registration = teamRepo.findByTeam(lifeSign.getTeamId());
+                // This is a weird thing in mysql: String comparison is case insensitive by default!!!
+                if (registration == null || !registration.getTeam().equals(lifeSign.getTeamId())) {
+                    erroneous.add(new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.NOT_REGISTERED));
+                } else if (!registration.getAccessCode().equals(lifeSign.getAccessCode())) {
+                    erroneous.add(new ErroneousLifeSign(lifeSign, ErroneousLifeSign.Reason.INVALID_ACCESS_CODE));
+                }
             }
+        } catch ( OutboundServiceException ose ) {
+            logger.error ( ose.getCause().getClass().getSimpleName() + ": Can't find erroneous lifesigns");
         }
 
         return erroneous;
@@ -278,7 +294,7 @@ public class ScheduleService {
 
         performAndExpireApplication(run.getTeam(), run.getSessionId());
 
-        ServiceResult result = relayApi.startRun(request, LOGGER);
+        ServiceResult result = relayApi.startRun(request, logger);
         if (result.getStatus() == ServiceResult.Status.OK) {
             run.setStatus(RunStatus.ONGOING);
             runRepo.save(run);
@@ -310,7 +326,7 @@ public class ScheduleService {
         publisher.publish(session.getCompetition(), run.getSessionId(), null);
 
         RunRequest request = getRunRequest(id, run);
-        return relayApi.stopRun(request, LOGGER);
+        return relayApi.stopRun(request, logger);
 
     }
 

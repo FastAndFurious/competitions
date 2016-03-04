@@ -21,7 +21,11 @@ public class RestfulPilotInfoResource implements PilotInfoResource {
     private String pilotUrlInfo;
 
     @Override
-    public PilotInfo retrieveInfo() {
-        return new RestTemplate().getForObject(pilotUrlInfo, PilotInfo.class);
+    public PilotInfo retrieveInfo() throws OutboundServiceException {
+        try {
+            return new RestTemplate().getForObject(pilotUrlInfo, PilotInfo.class);
+        } catch ( ResourceAccessException rae ) {
+            throw new OutboundServiceException( ( rae ));
+        }
     }
 }

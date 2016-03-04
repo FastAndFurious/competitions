@@ -2,6 +2,7 @@ package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
 import com.zuehlke.carrera.comp.repository.*;
+import com.zuehlke.carrera.comp.web.outbound.OutboundServiceException;
 import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
@@ -152,10 +153,10 @@ public class FreeTrainingService {
                                 }
                         );
                     });
-        } catch (Exception e) {
+        } catch (OutboundServiceException ose) {
             logger.error("Cannot access pilot info. Lifesigns not available");
             runs.forEach((r) -> r.setPilotState(FuriousRunDto.PilotState.UNKNOWN));
-        }
+         }
 
 
     }
