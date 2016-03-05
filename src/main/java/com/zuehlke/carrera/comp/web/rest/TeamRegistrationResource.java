@@ -38,7 +38,7 @@ public class TeamRegistrationResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> create(@Valid @RequestBody TeamRegistration teamRegistration) throws URISyntaxException {
-        log.debug("REST request to save TeamRegistration : {}", teamRegistration);
+        log.info("REST request to save TeamRegistration : {}", teamRegistration);
         if (teamRegistration.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new teamRegistration cannot already have an ID").build();
         }
@@ -57,7 +57,7 @@ public class TeamRegistrationResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> update(@Valid @RequestBody TeamRegistration teamRegistration) throws URISyntaxException {
-        log.debug("REST request to update TeamRegistration : {}", teamRegistration);
+        log.info("REST request to update TeamRegistration : {}", teamRegistration);
         if (teamRegistration.getId() == null) {
             return create(teamRegistration);
         }
@@ -101,7 +101,7 @@ public class TeamRegistrationResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void delete(@PathVariable Long id) {
-        log.debug("REST request to delete TeamRegistration : {}", id);
+        log.info("REST request to delete TeamRegistration : {}", id);
         teamRegistrationRepository.delete(id);
     }
 }

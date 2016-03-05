@@ -170,6 +170,7 @@ public class TeamRegistration implements Serializable {
                 ", competition='" + competition + "'" +
                 ", team='" + team + "'" +
                 ", registrationTime='" + registrationTime + "'" +
+                ", twitter='" + twitterNames + "'" +
                 '}';
     }
 }

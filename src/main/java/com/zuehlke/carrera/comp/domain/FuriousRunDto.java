@@ -24,8 +24,6 @@ public class FuriousRunDto extends FuriousRun {
 
     private PilotState pilotState;
 
-    public FuriousRunDto() {} // for JPA
-
     public FuriousRunDto ( FuriousRun run ) {
         this.id = run.id;
         this.team = run.team;
@@ -84,7 +82,7 @@ public class FuriousRunDto extends FuriousRun {
                 '}';
     }
 
-    public static enum PilotState {
+    public enum PilotState {
         CURRENT_LIFESIGNS,
         FORMER_LIFESIGNS,
         NO_LIFESIGNS,

@@ -53,12 +53,17 @@ public class TwitterService implements SocialBroadcaster {
         Twitter template = getTwitterTemplate("twitter");
 
         for ( String twitterName : twitterNames ) {
-            DirectMessage directMessage = template.directMessageOperations().sendDirectMessage(twitterName, message);
+            try {
+                DirectMessage directMessage = template.directMessageOperations().sendDirectMessage(twitterName, message);
+            } catch ( Exception e ) {
+                logger.error("Failed sending message to " + twitterName );
+                logger.error(e.getMessage());
+            }
         }
     }
 
     @Override
-    public void broadCast(ApplicationNotification application, List<ScheduledRun> schedule ) {
+    public void broadCast (ApplicationNotification application, List<ScheduledRun> schedule ) {
 
         LocalDateTime now = LocalDateTime.now();
         for ( ScheduledRun run : schedule ) {
