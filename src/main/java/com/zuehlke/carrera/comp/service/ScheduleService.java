@@ -287,7 +287,6 @@ public class ScheduleService {
     @Transactional
     public ServiceResult startRun(Long id) {
 
-
         FuriousRun run = runRepo.findOne(id);
         RunRequest request = getRunRequest(id, run);
         Competition comp = compRepo.findOne(run.getCompetitionId());

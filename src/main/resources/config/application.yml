@@ -35,6 +35,7 @@ swagger:
 competitions:
     relayUrl: http://localhost:8090/ws/rest/raceTracks/
     pilotInfoUrl: http://localhost:8090/ws/rest/pilots/info
+    twitter: false
 
 twitter:
     consumerKey: iDg09aMHy9iLrrLc1AOtK9HLj

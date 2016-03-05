@@ -7,6 +7,8 @@ import com.zuehlke.carrera.comp.domain.RoundResult;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.SpecialRepo;
 import com.zuehlke.carrera.comp.service.CompetitionStateAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import javax.inject.Inject;
 @Component
 public class StompCompetitionStatePublisher implements CompetitionStatePublisher {
 
+    static final Logger logger = LoggerFactory.getLogger(StompCompetitionStatePublisher.class);
+
     @Autowired
     private CompetitionStateAssembler assembler;
 
@@ -30,7 +34,7 @@ public class StompCompetitionStatePublisher implements CompetitionStatePublisher
 
         CompetitionState state = assembler.assembleStateInfo(competition, sessionId, team);
         if ( state.getRecentRunInfo() == null ) {
-            System.out.println("Gotcha!");
+            logger.info ( "Recent Run Info missing. Race is over.");
         }
         messagingTemplate.convertAndSend("/topic/status", state);
     }

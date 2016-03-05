@@ -16,6 +16,7 @@ angular.module('competitionApp')
             },
             'update': { method:'PUT' },
             'applyForTraining' : { method: 'POST' },
+            'registerPerformedTraining' : { method: 'POST' },
             'registerMissedTraining': { method: 'POST' }
         });
     });

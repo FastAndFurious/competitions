@@ -75,6 +75,9 @@ public class RaceManagementIntegrationTest {
     @Autowired
     private FreeTrainingResource freeTrainingResource;
 
+    @Autowired
+    private MockTwitterService twitterService;
+
     private int roundEventCounter;
 
     @Before
@@ -180,10 +183,13 @@ public class RaceManagementIntegrationTest {
              */
             try {
                 freeTrainingResource.applyForTraining(new ApplicationNotification("harries", s.getId()));
+                Assert.assertEquals ( 1, twitterService.getMessages().size());
                 sleep(1000);
                 freeTrainingResource.applyForTraining(new ApplicationNotification("wolfies", s.getId()));
+                Assert.assertEquals ( 2, twitterService.getMessages().size());
                 sleep(1000);
                 freeTrainingResource.applyForTraining(new ApplicationNotification("steffies", s.getId()));
+                Assert.assertEquals ( 2, twitterService.getMessages().size());
                 sleep(1000);
             } catch (URISyntaxException e) {
                 Assert.fail("Caught Exception. Wasn't expecting that.");
@@ -285,6 +291,7 @@ public class RaceManagementIntegrationTest {
             Assert.assertEquals ( "steffies", runs.get(1).getTeam());
             Assert.assertEquals ( "bernies", runs.get(0).getTeam());
         });
+        Assert.assertTrue ( twitterService.getMessages().size() == 0 );
 
     }
 
@@ -340,16 +347,16 @@ public class RaceManagementIntegrationTest {
     private void create_sessions() throws URISyntaxException {
 
         RacingSession training = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Training,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60);
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 180);
         ResponseEntity<Void> result = sessionResource.create(training);
         Assert.assertEquals ( HttpStatus.CREATED, result.getStatusCode());
 
         RacingSession quali = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Qualifying,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60 );
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 180 );
         sessionResource.create(quali);
 
         RacingSession finale = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Competition,
-                1, new LocalDateTime(), TRACK_ID, "Hollywood", 60);
+                1, new LocalDateTime(), TRACK_ID, "Hollywood", 180);
         sessionResource.create(finale);
 
         Assert.assertEquals ( 3, sessionResource.findByCompetition(COMPETITION_NAME).size());

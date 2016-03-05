@@ -39,7 +39,19 @@ angular.module('competitionApp')
             FuriousRun.start({'cmd': 'start', 'id': run.furiousId}, function(result) {
 
                 if ( result ) {
-                    $scope.loadAll(run.sessionId);
+
+                    var notification = {
+                        teamName: run.teamId,
+                        sessionId: run.sessionId
+                    };
+                    TrainingSchedule.registerMissedTraining({'cmd': 'performed'}, notification , function(result) {
+                        if ( result ) {
+                            $scope.loadAll(run.sessionId);
+                        }
+                    }, function ( error ) {
+                        $scope.currentErrorMessage = error.data.message;
+                        $('#errorMessageModal').modal('show');
+                    });
                 }
             }, function ( error ) {
                 $scope.currentErrorMessage = error.data.message;
@@ -73,11 +85,11 @@ angular.module('competitionApp')
 
         $scope.missedTraining = function ( run ) {
 
-            var application = {
+            var notification = {
                 teamName: run.teamId,
                 sessionId: run.sessionId
             };
-            TrainingSchedule.registerMissedTraining({'cmd': 'missed'}, application , function(result) {
+            TrainingSchedule.registerMissedTraining({'cmd': 'missed'}, notification , function(result) {
 
                 if ( result ) {
                     $scope.loadAll(run.sessionId);
