@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.comp.nolog;
 
 public interface CompetitionStatePublisher {
-    void publish(String competition, Long sessionId, String team);
+    void publishStatus(String competition, Long sessionId, String team);
+    void publishSchedule(Long sessionId );
 }

@@ -175,6 +175,7 @@ public class RaceManagementIntegrationTest {
 
     private void simulate_free_training_schedule() {
 
+
         List<RacingSession> allSessions = sessionResource.getAll();
         allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)-> {
 
@@ -184,6 +185,7 @@ public class RaceManagementIntegrationTest {
             try {
                 freeTrainingResource.applyForTraining(new ApplicationNotification("harries", s.getId()));
                 Assert.assertEquals ( 1, twitterService.getMessages().size());
+                Assert.assertEquals ( 4, publisher.getSchedule().getCurrentPositions().size());
                 sleep(1000);
                 freeTrainingResource.applyForTraining(new ApplicationNotification("wolfies", s.getId()));
                 Assert.assertEquals ( 2, twitterService.getMessages().size());

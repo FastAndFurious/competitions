@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<div>
+    <div class="centered">
+        <h1 class="title">Schedule: {{schedule.currentSession}}</h1>
+    </div>
+    <hr>
+    <div class="mainScheduleBoard">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Team</th>
+                    <th>Applied</th>
+                    <th>Start time</th>
+                    <th>Performed</th>
+                    <th>Missed</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="record in schedule.currentPositions">
+                    <td>{{record.position}}</td>
+                    <td>{{record.team}}</td>
+                    <td>{{record.applied}}</td>
+                    <td>{{record.schedule}}</td>
+                    <td>{{record.performed}}</td>
+                    <td>{{record.missed}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,10 +40,14 @@ public class RelayRestfulApi implements RelayApi {
                 return new ServiceResult(ServiceResult.Status.OK, "Success");
             }
         } catch ( HttpServerErrorException rce ) {
-                String originalCause = rce.getResponseBodyAsString();
-                logger.error("Could't start. Relay at " + relayStartUrl + " says: " + originalCause);
-                return new ServiceResult(ServiceResult.Status.NOK, originalCause);
-        }
+            String originalCause = rce.getResponseBodyAsString();
+            logger.error("Could't start. Relay at " + relayStartUrl + " says: " + originalCause);
+            return new ServiceResult(ServiceResult.Status.NOK, originalCause);
+        } catch ( ResourceAccessException rae ) {
+            String originalCause = rae.getCause().getMessage();
+            logger.error("Could't start. Relay at " + relayStartUrl + " not reachable: " + originalCause);
+            return new ServiceResult(ServiceResult.Status.NOK, originalCause);
+                }
     }
 
     @Override

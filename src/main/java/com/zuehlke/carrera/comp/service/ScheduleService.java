@@ -297,7 +297,7 @@ public class ScheduleService {
         if (result.getStatus() == ServiceResult.Status.OK) {
             run.setStatus(RunStatus.ONGOING);
             runRepo.save(run);
-            publisher.publish(comp.getName(), run.getSessionId(), run.getTeam());
+            publisher.publishStatus(comp.getName(), run.getSessionId(), run.getTeam());
         }
 
         return result;
@@ -322,7 +322,7 @@ public class ScheduleService {
         runRepo.save(run);
 
         RacingSession session = sessionRepo.findOne(run.getSessionId());
-        publisher.publish(session.getCompetition(), run.getSessionId(), null);
+        publisher.publishStatus(session.getCompetition(), run.getSessionId(), null);
 
         RunRequest request = getRunRequest(id, run);
         return relayApi.stopRun(request, logger);
@@ -374,7 +374,7 @@ public class ScheduleService {
             if ( session != null && session.getTrackId().equals(trackId)) {
 
                 run.setStatus(RunStatus.QUALIFIED);
-                publisher.publish(session.getCompetition(), run.getSessionId(), null);
+                publisher.publishStatus(session.getCompetition(), run.getSessionId(), null);
             }
         }
     }

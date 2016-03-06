@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.comp.service;
 
 import com.zuehlke.carrera.comp.domain.*;
+import com.zuehlke.carrera.comp.nolog.CompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.*;
 import com.zuehlke.carrera.comp.web.outbound.OutboundServiceException;
 import com.zuehlke.carrera.comp.web.outbound.PilotInfoResource;
@@ -46,6 +47,9 @@ public class FreeTrainingService {
 
     @Autowired
     private SocialBroadcaster socialBroadcaster;
+
+    @Autowired
+    private CompetitionStatePublisher publisher;
 
     /**
      * Create a list of scheduled run <p/>
@@ -174,6 +178,7 @@ public class FreeTrainingService {
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
         application.refreshIfExpired();
 
+        publisher.publishSchedule(notification.getSessionId());
         socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 
@@ -189,6 +194,7 @@ public class FreeTrainingService {
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
         application.incrementMissedRunsAndExpire();
 
+        publisher.publishSchedule(notification.getSessionId());
         socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 
@@ -204,6 +210,7 @@ public class FreeTrainingService {
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
         application.incrementPerformedRunsAndExpire();
 
+        publisher.publishSchedule(notification.getSessionId());
         socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
     }
 

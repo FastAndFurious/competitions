@@ -55,59 +55,10 @@ angular.module('scoreBoardApp', ['LocalStorageModule', 'tmh.dynamicLocale',
         $scope.title = "Competition not yet started";
 
         $scope.status = {
-            name: "HSR Challenge 2015",
-            currentSession: "Competition No 1",
-            currentBoard: [
-                {
-                    position: 1,
-                    team: "kobayashi",
-                    duration: 5960
-                },
-                {
-                    position: 2,
-                    team: "skyfall",
-                    duration: 6239
-                },
-                {
-                    position: 3,
-                    team: "amidala",
-                    duration: 7023
-                },
-                {
-                    position: 4,
-                    team: "schumi",
-                    duration: 7100
-                },
-                {
-                    position: 5,
-                    team: "geronimo",
-                    duration: 7301
-                }
-            ],
-            recentRunInfo: {
-                team: "kobayashi",
-                bestOfThisTeam: {
-                    position: 2,
-                    duration: 5678
-                },
-                currentRunResults: [
-                    {
-                        duration: 5678
-                    },
-                    {
-                        duration: 6100
-                    },
-                    {
-                        duration: 6200
-                    },
-                    {
-                        duration: 7101
-                    },
-                    {
-                        duration: 7234
-                    }
-                ]
-            }
+            name: "",
+            currentSession: "The Zühlke Fast And Furious Challenge",
+            currentBoard: [],
+            recentRunInfo: {}
         };
 
         var stopRun;

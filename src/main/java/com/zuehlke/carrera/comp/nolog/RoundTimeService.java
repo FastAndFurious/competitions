@@ -49,7 +49,7 @@ public class RoundTimeService {
 
         String competition = compRepo.findOne(run.getCompetitionId()).getName();
 
-        publisher.publish ( competition, run.getSessionId(), run.getTeam());
+        publisher.publishStatus( competition, run.getSessionId(), run.getTeam());
 
         return roundTime.getId();
     }

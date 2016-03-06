@@ -107,7 +107,7 @@ public class FuriousRunResource {
                 publishForRunId(run.getId());
             });
         } else {
-            publisher.publish(comp, sessionId, null);
+            publisher.publishStatus(comp, sessionId, null);
         }
         return scheduleService.findOrCreateForSession(sessionId);
     }
@@ -135,7 +135,7 @@ public class FuriousRunResource {
         FuriousRun run = repository.findOne(id);
         if ( run == null ) return;
         RacingSession session = sessionRepository.findOne(run.getSessionId());
-        publisher.publish(session.getCompetition(), run.getSessionId(), run.getTeam());
+        publisher.publishStatus(session.getCompetition(), run.getSessionId(), run.getTeam());
     }
 
     /**

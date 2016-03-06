@@ -163,6 +163,10 @@ public class RacingSession implements Serializable {
                 '}';
     }
 
+    public String shortName () {
+        return type + " Nr. " + seqNo;
+    }
+
     public enum SessionType {
         Training,
         Qualifying,
