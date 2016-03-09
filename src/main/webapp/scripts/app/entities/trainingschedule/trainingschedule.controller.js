@@ -59,9 +59,30 @@ angular.module('competitionApp')
             });
         };
 
+
         $scope.stopRun = function ( run ) {
 
             FuriousRun.query({'cmd': 'stop', 'id': run.furiousId}, function(result) {
+
+                if ( result ) {
+                    $scope.loadAll(run.sessionId);
+                }
+            });
+        };
+
+        $scope.pauseRun = function ( run ) {
+
+            FuriousRun.query({'cmd': 'pause', 'id': run.furiousId}, function(result) {
+
+                if ( result ) {
+                    $scope.loadAll(run.sessionId);
+                }
+            });
+        };
+
+        $scope.continueRun = function ( run ) {
+
+            FuriousRun.query({'cmd': 'continue', 'id': run.furiousId}, function(result) {
 
                 if ( result ) {
                     $scope.loadAll(run.sessionId);

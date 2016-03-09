@@ -378,4 +378,25 @@ public class ScheduleService {
             }
         }
     }
+
+    @Transactional
+    public void continueRun(Long id) {
+
+        FuriousRun run = runRepo.findOne(id);
+        relayApi.startRun(getRunRequest(id, run), logger);
+        logger.info ( "Continuing run {}", id );
+        run.setStatus(RunStatus.ONGOING);
+        runRepo.save(run);
+    }
+
+    @Transactional
+    public ServiceResult pauseRun(Long id) {
+
+        FuriousRun run = runRepo.findOne(id);
+        relayApi.stopRun(getRunRequest(id, run), logger);
+        run.setStatus(RunStatus.SUSPENDED);
+        runRepo.save(run);
+        logger.info ( "Paused run {}", id );
+        return new ServiceResult(ServiceResult.Status.OK, "paused" + id);
+    }
 }

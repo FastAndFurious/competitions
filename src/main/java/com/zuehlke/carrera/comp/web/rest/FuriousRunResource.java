@@ -8,9 +8,11 @@ import com.zuehlke.carrera.comp.domain.RacingSession;
 import com.zuehlke.carrera.comp.nolog.StompCompetitionStatePublisher;
 import com.zuehlke.carrera.comp.repository.FuriousRunRepository;
 import com.zuehlke.carrera.comp.repository.RacingSessionRepository;
+import com.zuehlke.carrera.comp.service.RelayApi;
 import com.zuehlke.carrera.comp.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -139,7 +141,7 @@ public class FuriousRunResource {
     }
 
     /**
-     * GET /furiousRuns/start/:id -> stop the race with id :id
+     * GET /furiousRuns/stop/:id -> stop the race with id :id
      */
     @RequestMapping(value = "/furiousruns/stop/{id}",
             method = RequestMethod.GET,
@@ -148,6 +150,37 @@ public class FuriousRunResource {
     public ResponseEntity<Void> stopRun( @PathVariable Long id) {
         log.info("REST request to stop run {}", id);
         scheduleService.stopRun(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+    @RequestMapping(value = "/furiousruns/pause/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    @Timed
+    public ResponseEntity<Void> pauseRun( @PathVariable Long id) {
+        log.info("REST request to start run {}", id);
+        ServiceResult result = scheduleService.pauseRun(id);
+        if ( result.getStatus() == ServiceResult.Status.OK ) {
+            publishForRunId ( id );
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * GET /furiousRuns/continue/:id -> continue the race with id :id
+     */
+    @RequestMapping(value = "/furiousruns/continue/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> continueRun( @PathVariable Long id) {
+        log.info("REST request to continue run {}", id);
+        scheduleService.continueRun(id);
         return ResponseEntity.ok().build();
     }
 

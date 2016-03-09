@@ -32,7 +32,7 @@ public class NativeSqlSpecialRepo implements SpecialRepo {
 
         String sql = "select r.id from t_racingsession s, furious_runs r " +
                 "where s.id = r.sessionid " +
-                "    and s.track_id = :track and r.status = 'ONGOING';";
+                "    and s.track_id = :track and r.status IN ('ONGOING', 'SUSPENDED');";
 
         Query query = em.createNativeQuery(sql);
 

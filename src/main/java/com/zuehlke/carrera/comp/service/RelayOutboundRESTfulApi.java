@@ -13,10 +13,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- *  The restful implementation of the relay api
+ * The restful implementation of the relay api
  */
 @Component
-public class RelayRestfulApi implements RelayApi {
+public class RelayOutboundRESTfulApi implements RelayApi {
 
     @Value("${competitions.relayUrl}/start")
     private String relayStartUrl;
@@ -39,28 +39,38 @@ public class RelayRestfulApi implements RelayApi {
                 logger.info("Successful sent POST race start to " + relayStartUrl);
                 return new ServiceResult(ServiceResult.Status.OK, "Success");
             }
-        } catch ( HttpServerErrorException rce ) {
+        } catch (HttpServerErrorException rce) {
             String originalCause = rce.getResponseBodyAsString();
             logger.error("Could't start. Relay at " + relayStartUrl + " says: " + originalCause);
             return new ServiceResult(ServiceResult.Status.NOK, originalCause);
-        } catch ( ResourceAccessException rae ) {
+        } catch (ResourceAccessException rae) {
             String originalCause = rae.getCause().getMessage();
             logger.error("Could't start. Relay at " + relayStartUrl + " not reachable: " + originalCause);
             return new ServiceResult(ServiceResult.Status.NOK, originalCause);
-                }
+        }
     }
 
     @Override
     public ServiceResult stopRun(RunRequest request, Logger logger) {
 
-        ResponseEntity<String> response = new RestTemplate().postForEntity(relayStopUrl, request, String.class);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            logger.error("Could not POST race start to " + relayStopUrl + "!");
-            logger.error("HTTP Response was: " + response.getBody());
-            return new ServiceResult(ServiceResult.Status.NOK, response.getBody());
-        } else {
-            logger.info("Successful sent POST race stop to " + relayStopUrl);
-            return new ServiceResult(ServiceResult.Status.OK, "Success");
+        try {
+            ResponseEntity<String> response = new RestTemplate().postForEntity(relayStopUrl, request, String.class);
+            if (response.getStatusCode() != HttpStatus.OK) {
+                logger.error("Could not POST race stop to " + relayStopUrl + "!");
+                logger.error("HTTP Response was: " + response.getBody());
+                return new ServiceResult(ServiceResult.Status.NOK, response.getBody());
+            } else {
+                logger.info("Successful sent POST race stop to " + relayStopUrl);
+                return new ServiceResult(ServiceResult.Status.OK, "Success");
+            }
+        } catch (HttpServerErrorException rce) {
+            String originalCause = rce.getResponseBodyAsString();
+            logger.error("Could't stop. Relay at " + relayStopUrl + " says: " + originalCause);
+            return new ServiceResult(ServiceResult.Status.NOK, originalCause);
+        } catch (ResourceAccessException rae) {
+            String originalCause = rae.getCause().getMessage();
+            logger.error("Could't stop. Relay at " + relayStopUrl + " not reachable: " + originalCause);
+            return new ServiceResult(ServiceResult.Status.NOK, originalCause);
         }
     }
 }

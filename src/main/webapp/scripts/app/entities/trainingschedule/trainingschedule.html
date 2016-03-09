@@ -37,6 +37,8 @@
                     <th>Missed</th>
                     <th>Life Signs</th>
                     <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -51,14 +53,26 @@
                     <td>{{run.pilotState}}</td>
                     <td>
                         <button type="submit" ng-click="startRun(run)"
-                                ng-hide="run.status==='ONGOING'"
+                                ng-hide="run.status==='ONGOING' || run.status==='SUSPENDED'"
                                 class="btn btn-info btn-sm">
                             <span class="glyphicon glyphicon-flag"></span>&nbsp;<span>Start</span>
                         </button>
                         <button type="submit" ng-click="stopRun(run)"
-                                ng-show="run.status==='ONGOING'"
+                                ng-show="run.status==='ONGOING' || run.status==='SUSPENDED'"
                                 class="btn btn-danger btn-sm">
                             <span class="glyphicon glyphicon-remove"></span>&nbsp;<span>Stop</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="submit" ng-click="continueRun(run)"
+                                ng-show="run.status==='SUSPENDED'"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-flag"></span>&nbsp;<span>Continue</span>
+                        </button>
+                        <button type="submit" ng-click="pauseRun(run)"
+                                ng-show="run.status==='ONGOING'"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-pause"></span>&nbsp;<span>Pause</span>
                         </button>
                     </td>
                     <td>
