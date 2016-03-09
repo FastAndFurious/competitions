@@ -183,14 +183,14 @@ public class RaceManagementIntegrationTest {
              * the first three teams apply and will start in the order of application
              */
             try {
-                freeTrainingResource.applyForTraining(new ApplicationNotification("harries", s.getId()));
+                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "harries", s.getId()));
                 Assert.assertEquals ( 1, twitterService.getMessages().size());
                 Assert.assertEquals ( 4, publisher.getSchedule().getCurrentPositions().size());
                 sleep(1000);
-                freeTrainingResource.applyForTraining(new ApplicationNotification("wolfies", s.getId()));
+                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "wolfies", s.getId()));
                 Assert.assertEquals ( 2, twitterService.getMessages().size());
                 sleep(1000);
-                freeTrainingResource.applyForTraining(new ApplicationNotification("steffies", s.getId()));
+                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "steffies", s.getId()));
                 Assert.assertEquals ( 2, twitterService.getMessages().size());
                 sleep(1000);
             } catch (URISyntaxException e) {
@@ -203,7 +203,7 @@ public class RaceManagementIntegrationTest {
              * the first team runs, the fourth team applies
              */
             try {
-                freeTrainingResource.applyForTraining(new ApplicationNotification("bernies", s.getId()));
+                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "bernies", s.getId()));
                 freeTrainingResource.registerPerformedRun ( new RunPerformedNotification("harries", s.getId()));
             } catch (URISyntaxException e) {
                 Assert.fail("Caught Exception. Wasn't expecting that.");

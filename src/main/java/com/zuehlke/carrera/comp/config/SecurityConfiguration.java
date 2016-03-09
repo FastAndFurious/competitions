@@ -125,7 +125,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/teamRegistrations").permitAll()
                 .antMatchers("/api/competitions").permitAll()
                 .antMatchers("/api/runschedule").permitAll()
-                .antMatchers("/api/trainingschedule").permitAll()
+                .antMatchers("/api/trainingschedule/**").permitAll()
                 .antMatchers("/api/runFinished").permitAll()
                 .antMatchers("/api/logs/**").hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers("/api/**").authenticated()

@@ -55,15 +55,14 @@ public class FreeTrainingResource {
     @Timed
     public ResponseEntity<Void> applyForTraining(@Valid @RequestBody ApplicationNotification application) throws URISyntaxException {
         logger.info("REST request from {} to apply for training.", application.getTeamName());
-        if (application.getSessionId() == null) {
-            return ResponseEntity.badRequest().header("Failure", "Need session id to apply").build();
+
+        try {
+            freeTrainingService.applyForTraining(application);
+            return ResponseEntity.created(new URI("/api/freetrainings/applications/" )).build();
+        } catch ( IllegalStateException ise ) {
+            return ResponseEntity.badRequest().header("Failure", ise.getMessage()).build();
         }
-
-        freeTrainingService.applyForTraining ( application );
-
-        return ResponseEntity.created(new URI("/api/freetrainings/applications/" )).build();
     }
-
 
     @RequestMapping(value = "/performed",
             method = RequestMethod.POST,

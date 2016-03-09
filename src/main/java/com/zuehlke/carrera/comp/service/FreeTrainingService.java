@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +25,9 @@ import java.util.stream.Collectors;
 public class FreeTrainingService {
 
     private static final Logger logger = LoggerFactory.getLogger(FreeTrainingService.class);
+
+    @Autowired
+    private CompetitionRepository compRepo;
 
     @Autowired
     private TeamRegistrationRepository teamRepo;
@@ -175,11 +177,42 @@ public class FreeTrainingService {
     @Transactional
     public void applyForTraining(ApplicationNotification notification) {
 
+        if ( notification.getSessionId() == null ) {
+            if ( notification.getCompetition() != null ) {
+                Long theSingleTrainingSession = findTheSingleTrainingSessionOrFail(notification.getCompetition());
+                notification.setSessionId(theSingleTrainingSession);
+            }
+        }
         TrainingApplication application = assureApplication(notification.getTeamName(), notification.getSessionId());
         application.refreshIfExpired();
 
         publisher.publishSchedule(notification.getSessionId());
         socialBroadcaster.broadCast ( notification, getSchedule(notification.getSessionId()) );
+    }
+
+    /**
+     * only returns regularly if there is a single training session in this competition
+     * @param competition name of the competition
+     * @return the id of the single training session if there is just a single one.
+     * @throws IllegalStateException if none or more than a single training sessions are available in the competition.
+     */
+    private Long findTheSingleTrainingSessionOrFail(String competition ) throws IllegalStateException {
+
+        Long singleTrainingSessionId = null;
+        List<RacingSession> sessions = sessionRepo.findByCompetition(competition);
+        for ( RacingSession session : sessions ) {
+            if ( session.getType() == RacingSession.SessionType.Training ) {
+                if ( singleTrainingSessionId == null ) {
+                    singleTrainingSessionId = session.getId();
+                } else {
+                    throw new IllegalStateException("More than a single training session.");
+                }
+            }
+        }
+        if ( singleTrainingSessionId == null ) {
+            throw new IllegalStateException("Not even a single training session.");
+        }
+        return singleTrainingSessionId;
     }
 
     /**

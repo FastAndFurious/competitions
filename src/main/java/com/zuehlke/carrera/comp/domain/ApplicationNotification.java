@@ -3,14 +3,24 @@ package com.zuehlke.carrera.comp.domain;
 
 public class ApplicationNotification {
 
+    private String competition;
     private String teamName;
     private Long sessionId;
 
     public ApplicationNotification() {}
 
-    public ApplicationNotification(String teamName, Long sessionId ) {
+    public ApplicationNotification(String competition, String teamName, Long sessionId ) {
+        this.competition = competition;
         this.teamName = teamName;
         this.sessionId = sessionId;
+    }
+
+    public String getCompetition() {
+        return competition;
+    }
+
+    public void setCompetition(String competition) {
+        this.competition = competition;
     }
 
     public String getTeamName() {
