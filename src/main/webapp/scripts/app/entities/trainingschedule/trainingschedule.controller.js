@@ -44,14 +44,8 @@ angular.module('competitionApp')
                         teamName: run.teamId,
                         sessionId: run.sessionId
                     };
-                    TrainingSchedule.registerMissedTraining({'cmd': 'performed'}, notification , function(result) {
-                        if ( result ) {
-                            $scope.loadAll(run.sessionId);
-                        }
-                    }, function ( error ) {
-                        $scope.currentErrorMessage = error.data.message;
-                        $('#errorMessageModal').modal('show');
-                    });
+                    $scope.loadAll(run.sessionId);
+
                 }
             }, function ( error ) {
                 $scope.currentErrorMessage = error.data.message;
