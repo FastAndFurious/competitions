@@ -3,9 +3,11 @@ package com.zuehlke.carrera.comp.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.zuehlke.carrera.comp.domain.TeamRegistration;
 import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
+import com.zuehlke.carrera.comp.service.TeamRegistrationService;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +29,11 @@ public class TeamRegistrationResource {
 
     private final Logger log = LoggerFactory.getLogger(TeamRegistrationResource.class);
 
-    @Inject
+    @Autowired
     private TeamRegistrationRepository teamRegistrationRepository;
+
+    @Autowired
+    private TeamRegistrationService registrationService;
 
     /**
      * POST  /teamRegistrations -> Create a new teamRegistration.
@@ -47,6 +52,20 @@ public class TeamRegistrationResource {
         }
         teamRegistrationRepository.save(teamRegistration);
         return ResponseEntity.created(new URI("/api/teamRegistrations/" + teamRegistration.getId())).build();
+    }
+
+    /**
+     * POST  /teamRegistrations -> Create a new teamRegistration.
+     */
+    @RequestMapping(value = "/batchRegistrations",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> createBatch(@RequestBody BatchRegistration batchRegistration) throws URISyntaxException {
+        log.info("REST request to ceate a batch of registrations for {}", batchRegistration.getCompetition());
+        registrationService.createRegistrations(batchRegistration.getCompetition(),
+                batchRegistration.getNumberOfRegistrations());
+        return ResponseEntity.created(new URI("/api/batchRegistrations/" + batchRegistration.getCompetition())).build();
     }
 
     /**

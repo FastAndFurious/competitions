@@ -6,6 +6,7 @@ import com.zuehlke.carrera.comp.repository.TeamRegistrationRepository;
 import com.zuehlke.carrera.comp.service.ErroneousLifeSign;
 import com.zuehlke.carrera.comp.service.MockCompetitionStatePublisher;
 import com.zuehlke.carrera.comp.service.MockPilotInfoResource;
+import com.zuehlke.carrera.comp.service.TeamRegistrationService;
 import com.zuehlke.carrera.comp.web.rest.*;
 import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
@@ -52,6 +53,8 @@ public class RaceManagementIntegrationTest {
     @Autowired
     private PerformTraining training;
 
+    @Autowired
+    private TeamRegistrationService registrationService;
 
     private int roundEventCounter;
 
@@ -116,6 +119,8 @@ public class RaceManagementIntegrationTest {
         simulate_training_runs();
 
         create_quali_schedule ( false );
+
+        register_batch ();
 
         simulate_lifesigns ();
 
@@ -301,6 +306,9 @@ public class RaceManagementIntegrationTest {
         Assert.assertNull ( reg );
     }
 
+    private void register_batch () {
+        registrationService.createRegistrations(COMPETITION_NAME, 5);
+    }
 
     private void create_sessions() throws URISyntaxException {
 

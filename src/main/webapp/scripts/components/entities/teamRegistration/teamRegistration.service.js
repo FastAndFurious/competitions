@@ -3,7 +3,7 @@
 angular.module('competitionApp')
     .factory('TeamRegistration', function ($resource) {
         return $resource('api/teamRegistrations/:id', {}, {
-            'query': { method: 'GET', isArray: true},
+            'query': {method: 'GET', isArray: true},
             'get': {
                 method: 'GET',
                 transformResponse: function (data) {
@@ -12,6 +12,11 @@ angular.module('competitionApp')
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': {method: 'PUT'}
+        });
+    })
+    .factory('BatchRegistration', function ($resource) {
+        return $resource('api/batchRegistrations/', {}, {
+            'createBatch': {method: 'POST'}
         });
     });
