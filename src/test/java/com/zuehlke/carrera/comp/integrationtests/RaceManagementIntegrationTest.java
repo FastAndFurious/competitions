@@ -9,13 +9,11 @@ import com.zuehlke.carrera.comp.service.MockPilotInfoResource;
 import com.zuehlke.carrera.comp.web.rest.*;
 import com.zuehlke.carrera.relayapi.messages.PilotLifeSign;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
-import io.gatling.core.controller.Run;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.ExactComparisonCriteria;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
@@ -49,34 +47,11 @@ public class RaceManagementIntegrationTest {
     private static final Map<String, Integer> names = new HashMap<>();
 
     @Autowired
-    private CompetitionResource competitionResource;
+    private TestSystem t;
 
     @Autowired
-    private RacingSessionResource sessionResource;
+    private PerformTraining training;
 
-    @Autowired
-    private TeamRegistrationResource registrationResource;
-
-    @Autowired
-    private FuriousRunResource runResource;
-
-    @Autowired
-    private RoundTimeResource roundTimeResource;
-
-    @Autowired
-    private MockCompetitionStatePublisher publisher;
-
-    @Autowired
-    private MockPilotInfoResource pilotInfoResource;
-
-    @Autowired
-    private TeamRegistrationRepository teamRepo;
-
-    @Autowired
-    private FreeTrainingResource freeTrainingResource;
-
-    @Autowired
-    private MockTwitterService twitterService;
 
     private int roundEventCounter;
 
@@ -132,7 +107,7 @@ public class RaceManagementIntegrationTest {
 
         create_quali_schedule ( true ); // expect empty result
 
-        create_training_schedule ();
+        training.create_training_schedule ();
 
         create_quali_schedule ( true ); // expect empty result
 
@@ -150,22 +125,22 @@ public class RaceManagementIntegrationTest {
 
     private void simulate_lifesigns() {
         long now = System.currentTimeMillis();
-        pilotInfoResource.registerLifeSign ( new PilotLifeSign("wolfies", "no_access", "url", now ));
-        pilotInfoResource.registerLifeSign ( new PilotLifeSign("mummies", "access", "url", now ));
-        pilotInfoResource.registerLifeSign ( new PilotLifeSign("harries", "access", "url", now ));
-        pilotInfoResource.registerLifeSign ( new PilotLifeSign("bernies", "access", "url", now ));
-        pilotInfoResource.registerLifeSign ( new PilotLifeSign("steffies", "access", "url", now ));
+        t.pilotInfoResource.registerLifeSign ( new PilotLifeSign("wolfies", "no_access", "url", now ));
+        t.pilotInfoResource.registerLifeSign ( new PilotLifeSign("mummies", "access", "url", now ));
+        t.pilotInfoResource.registerLifeSign ( new PilotLifeSign("harries", "access", "url", now ));
+        t.pilotInfoResource.registerLifeSign ( new PilotLifeSign("bernies", "access", "url", now ));
+        t.pilotInfoResource.registerLifeSign ( new PilotLifeSign("steffies", "access", "url", now ));
     }
 
     private void erroneousLifeSigns() {
 
-        List<ErroneousLifeSign> errors = sessionResource.findErroneousLifeSigns();
+        List<ErroneousLifeSign> errors = t.sessionResource.findErroneousLifeSigns();
         Assert.assertEquals ( 2, errors.size());
         Assert.assertTrue ( errors.stream().anyMatch(e -> e.getTeamId().equals("mummies")));
         Assert.assertTrue ( errors.stream().anyMatch(e -> e.getTeamId().equals("wolfies")));
     }
 
-    private void sleep ( int millies ) {
+    private void sleepWell(int millies) {
         try {
             Thread.sleep( millies );
         } catch ( Exception e ) {
@@ -176,39 +151,39 @@ public class RaceManagementIntegrationTest {
     private void simulate_free_training_schedule() {
 
 
-        List<RacingSession> allSessions = sessionResource.getAll();
+        List<RacingSession> allSessions = t.sessionResource.getAll();
         allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)-> {
 
             /**
              * the first three teams apply and will start in the order of application
              */
             try {
-                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "harries", s.getId()));
-                Assert.assertEquals ( 1, twitterService.getMessages().size());
-                Assert.assertEquals ( 4, publisher.getSchedule().getCurrentPositions().size());
-                sleep(1000);
-                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "wolfies", s.getId()));
-                Assert.assertEquals ( 2, twitterService.getMessages().size());
-                sleep(1000);
-                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "steffies", s.getId()));
-                Assert.assertEquals ( 2, twitterService.getMessages().size());
-                sleep(1000);
+                t.freeTrainingResource.applyForTraining(new ApplicationNotification(null, "harries", s.getId()));
+                Assert.assertEquals ( 1, t.twitterService.getMessages().size());
+                Assert.assertEquals ( 4, t.publisher.getSchedule().getCurrentPositions().size());
+                sleepWell(1000);
+                t.freeTrainingResource.applyForTraining(new ApplicationNotification(null, "wolfies", s.getId()));
+                Assert.assertEquals ( 2, t.twitterService.getMessages().size());
+                sleepWell(1000);
+                t.freeTrainingResource.applyForTraining(new ApplicationNotification(null, "steffies", s.getId()));
+                Assert.assertEquals ( 2, t.twitterService.getMessages().size());
+                sleepWell(1000);
             } catch (URISyntaxException e) {
                 Assert.fail("Caught Exception. Wasn't expecting that.");
             }
-            List<ScheduledRun> runs = freeTrainingResource.getSchedule(s.getId());
+            List<ScheduledRun> runs = t.freeTrainingResource.getSchedule(s.getId());
             assertOrder ( runs, "harries", "wolfies", "steffies", "bernies");
 
             /**
              * the first team runs, the fourth team applies
              */
             try {
-                freeTrainingResource.applyForTraining(new ApplicationNotification(null, "bernies", s.getId()));
-                freeTrainingResource.registerPerformedRun ( new RunPerformedNotification("harries", s.getId()));
+                t.freeTrainingResource.applyForTraining(new ApplicationNotification(null, "bernies", s.getId()));
+                t.freeTrainingResource.registerPerformedRun ( new RunPerformedNotification("harries", s.getId()));
             } catch (URISyntaxException e) {
                 Assert.fail("Caught Exception. Wasn't expecting that.");
             }
-            runs = freeTrainingResource.getSchedule(s.getId());
+            runs = t.freeTrainingResource.getSchedule(s.getId());
             assertOrder ( runs, "wolfies", "steffies", "bernies", "harries");
 
         });
@@ -232,22 +207,22 @@ public class RaceManagementIntegrationTest {
             simulate_training_run( team );
         }
 
-        List<RoundTime> roundTimes = roundTimeResource.getAll();
+        List<RoundTime> roundTimes = t.roundTimeResource.getAll();
         Assert.assertEquals ( 12, roundTimes.size() );
     }
 
     private void simulate_training_run(String team) {
-        List<RacingSession> allSessions = sessionResource.getAll();
+        List<RacingSession> allSessions = t.sessionResource.getAll();
         allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)->{
 
-            runResource.getSchedule( s.getId() ).stream().filter((r)->r.getTeam().equals(team)).forEach((r)->{
-                runResource.startRun(r.getId());
+            t.runResource.getSchedule( s.getId() ).stream().filter((r)->r.getTeam().equals(team)).forEach((r)->{
+                t.runResource.startRun(r.getId());
                 try {
                     simulate_roundTimes ( team, s.getId(), r.getId());
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
-                runResource.stopRun(r.getId());
+                t.runResource.stopRun(r.getId());
             });
         });
     }
@@ -257,9 +232,9 @@ public class RaceManagementIntegrationTest {
         for ( int round = 0; round < 3; round ++ ) {
             RoundTimeMessage message = new RoundTimeMessage(TRACK_ID, team, System.currentTimeMillis(),
                     roundTimes.get(sessionId).get(runId)[round]);
-            roundTimeResource.register(message);
+            t.roundTimeResource.register(message);
 
-            assertState ( roundEventCounter++, publisher.getState());
+            assertState ( roundEventCounter++, t.publisher.getState());
         }
     }
 
@@ -278,30 +253,11 @@ public class RaceManagementIntegrationTest {
         }
     }
 
-    /**
-     * Training schedule: first to register may start latest, which is an advantage, because the team
-     * can learn from the others while waiting for their term.
-     */
-    private void create_training_schedule() {
-
-        List<RacingSession> allSessions = sessionResource.getAll();
-        allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Training).forEach((s)->{
-            List<FuriousRunDto> runs = runResource.getSchedule( s.getId() );
-            Assert.assertEquals ( 4, runs.size());
-            Assert.assertEquals ( "wolfies", runs.get(3).getTeam());
-            Assert.assertEquals ( "harries", runs.get(2).getTeam());
-            Assert.assertEquals ( "steffies", runs.get(1).getTeam());
-            Assert.assertEquals ( "bernies", runs.get(0).getTeam());
-        });
-        Assert.assertTrue ( twitterService.getMessages().size() == 0 );
-
-    }
-
     private void create_quali_schedule( boolean expectEmpty ) {
 
-        List<RacingSession> allSessions = sessionResource.getAll();
+        List<RacingSession> allSessions = t.sessionResource.getAll();
         allSessions.stream().filter((s)->s.getType()== RacingSession.SessionType.Qualifying).forEach((s)->{
-            List<FuriousRunDto> runs = runResource.getSchedule( s.getId() );
+            List<FuriousRunDto> runs = t.runResource.getSchedule( s.getId() );
             if ( expectEmpty ) {
                 Assert.assertEquals(0, runs.size());
             } else {
@@ -327,21 +283,21 @@ public class RaceManagementIntegrationTest {
 
         TeamRegistration wolfies  = new TeamRegistration(null, COMPETITION_NAME, "wolfies", "access", protocol, encoding, first);
         wolfies.setTwitterNames("@wgiersche");
-        registrationResource.create(wolfies);
+        t.registrationResource.create(wolfies);
 
         TeamRegistration harries  = new TeamRegistration(null, COMPETITION_NAME, "harries", "access", protocol, encoding, second);
         harries.setTwitterNames("@wgiersche");
-        registrationResource.create(harries);
+        t.registrationResource.create(harries);
 
         TeamRegistration steffies  = new TeamRegistration(null, COMPETITION_NAME, "steffies", "access", protocol, encoding, third);
         steffies.setTwitterNames("@wgiersche");
-        registrationResource.create(steffies);
+        t.registrationResource.create(steffies);
 
         TeamRegistration bernies  = new TeamRegistration(null, COMPETITION_NAME, "bernies", "access", protocol, encoding, fourth);
         bernies.setTwitterNames("@wgiersche");
-        registrationResource.create(bernies);
+        t.registrationResource.create(bernies);
 
-        TeamRegistration reg = teamRepo.findByTeam("Wolfies");
+        TeamRegistration reg = t.teamRepo.findByTeam("Wolfies");
         Assert.assertNull ( reg );
     }
 
@@ -350,24 +306,24 @@ public class RaceManagementIntegrationTest {
 
         RacingSession training = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Training,
                 1, new LocalDateTime(), TRACK_ID, "Hollywood", 180);
-        ResponseEntity<Void> result = sessionResource.create(training);
+        ResponseEntity<Void> result = t.sessionResource.create(training);
         Assert.assertEquals ( HttpStatus.CREATED, result.getStatusCode());
 
         RacingSession quali = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Qualifying,
                 1, new LocalDateTime(), TRACK_ID, "Hollywood", 180 );
-        sessionResource.create(quali);
+        t.sessionResource.create(quali);
 
         RacingSession finale = new RacingSession(null, COMPETITION_NAME, RacingSession.SessionType.Competition,
                 1, new LocalDateTime(), TRACK_ID, "Hollywood", 180);
-        sessionResource.create(finale);
+        t.sessionResource.create(finale);
 
-        Assert.assertEquals ( 3, sessionResource.findByCompetition(COMPETITION_NAME).size());
+        Assert.assertEquals ( 3, t.sessionResource.findByCompetition(COMPETITION_NAME).size());
     }
 
 
     private void create_a_new_competition() throws URISyntaxException {
 
         Competition competition = new Competition(null,  "TEST_COMPETITION", TRACK_ID, new LocalDate());
-        competitionResource.create(competition);
+        t.competitionResource.create(competition);
     }
 }
